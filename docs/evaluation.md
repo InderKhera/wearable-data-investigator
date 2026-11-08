@@ -20,7 +20,6 @@ The scripted controller test passed an observed event ID from `find_heart_rate_e
 
 Live inference was tested on the Apple Silicon Mac through LangChain and the existing mimOE Studio 1.0.38 runtime. The bundled `SmolLM2-360M-Instruct-Q2_K` model returned a valid text completion in the smoke test. Two routing probes, one using letter actions and one using numbered options, each answered 1 of 7 decision cases correctly. With the full controller, **0 of 11 live cases passed** and 22 malformed or schema-invalid actions were blocked before any tool executed. See the [captured live report](live-smollm2.json) for per-case results, reasons, and elapsed times. The working API connection and the unreliable action selection are separate findings.
 
-A candidate model for the next evaluation is [Qwen2.5-1.5B-Instruct Q4_K_M](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/tree/main). Its GGUF file is about 1.12 GB and its publisher documents support for structured text generation. Confirm support in the local Studio version, load the approved model, set its actual model ID, and run both the smoke test and the full evaluation. This project requires a demonstrated tool-selection pass for a successful interview run.
 
 ## SmolLM2 diagnosis and focused retry
 
@@ -57,4 +56,34 @@ I also tried compact question-and-evidence text, a short command format, and nat
 
 The [interactive CLI transcript](live-qwen-0.5b-cli.txt) shows all four guided questions entered consecutively on `rising`. The quality question asked for clarification. The event and movement questions displayed real computed evidence before reporting a stopping failure. The interval comparison failed before any tool ran. The transcript is a partial live demonstration, and the model did not qualify for the repeated paired acceptance test.
 
-The 0.5B model passed the connectivity check and sometimes chose a valid tool, but it cannot yet be recommended for the submission demo. A separate evaluation of the already-downloaded Qwen2.5 1.5B Q4 model, loaded by itself, would be the next comparison if the hardware can run it comfortably.
+
+## Bounded controller with the same 0.5B model
+
+The open action loop made Qwen infer intent, produce arguments, remember which evidence it had gathered, and decide when to stop on every step. The revised controller asks it to select one analysis goal. Python handles literal time conversion, checks that any referenced event was observed, and finalizes after the requested evidence is available. If multiple observed events remain plausible, the controller asks the model to select from those IDs or clarify. The latter branch is covered by a scripted controller test.
+
+All tests used the existing Qwen model in mimOE and the original inference endpoint. The [full recorded evaluation](live-qwen-0.5b-bounded.json) includes the raw model labels, executed arguments, observed results, and stop reasons.
+
+| Metric | Result on the original 11 cases |
+|---|---:|
+| Correct model goal selections | 11/11 |
+| Successful tool executions | 11 total: 8 selected goal tools and 3 prerequisite searches |
+| Malformed replies or invalid tool calls rejected | 0 |
+| Actions withheld by safeguards | 1 unavailable event follow-up, 1 missing comparison reference |
+| Investigations ended by the controller with evidence | 9: 8 requested analyses and 1 empty event search |
+| Model-driven out-of-scope stop | 1 diagnostic request |
+| Explicit model finish actions after an investigation | 0, because the controller handles completion |
+| Successful end-to-end requests | 11/11 |
+| Median elapsed time | 0.059 s, range 0.028–0.126 s |
+
+The pass criteria for the original 11 cases are unchanged. Correct goal selection is reported separately from the trace, argument, and disposition checks.
+
+The same event-and-movement question ran three times on each recording. Qwen chose `motion` in all six runs. Python ran heart search and movement using observed event 1 on `rising` (3/3). It stopped after heart search on `steady` (3/3) because there was no qualifying event. These are evidence-driven controller transitions, and the model did not make separate finish calls.
+
+The [live interactive walkthrough](live-qwen-0.5b-bounded-cli.txt) records all four guided prompts:
+
+- Quality reported the initial 10-second HR gap in `offset`.
+- Heart-rate investigation found event 1 from 07:45 to 16:00 in `rising`, with a peak of 128.27 bpm.
+- Movement context used event 1 and found a mean wrist-motion increase of 0.0368 g RMS versus the preceding interval.
+- Baseline comparison used event 1 and found mean differences of +43.98 bpm and +0.0434 g RMS relative to the opening two minutes.
+
+Two of three additional paraphrases passed. “Did either channel miss any samples?” was misclassified as unsupported. The extended check therefore passed 6/7 cases, including all four additional pair runs. The model's sensitivity to phrasing remains a limitation. Times above measure whole agent turns on the development Mac during the live run. No separate memory benchmark was performed.

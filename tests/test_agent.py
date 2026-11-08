@@ -11,58 +11,94 @@ from wearable.data import load_recording
 
 
 class ScriptedModel:
-    """Scripted decisions test the controller, never local model capability."""
+    """Scripted choices test the controller, never local model capability."""
 
     def __init__(self, *responses):
         self.responses = iter(responses)
-        self.states = []
+        self.requests = []
 
     def invoke(self, messages):
-        self.states.append(json.loads(messages[-1].content))
+        self.requests.append(messages)
         return AIMessage(content=next(self.responses))
 
 
 def test_action_observation_and_followup():
-    model = ScriptedModel('{"action":"heart"}', '{"action":"finish"}',
-                          '{"action":"motion","args":{"event":1}}', '{"action":"finish"}')
+    model = ScriptedModel("heart", "motion")
     agent = Agent(model, load_recording("rising"))
-    assert agent.run("Find heart-rate elevations.").status == "ok"
+    assert agent.run("Find heart-rate elevations.").stop_reason == "goal_satisfied"
     run = agent.run("How much wrist motion was recorded during the first event?")
     assert [step.action for step in run.steps] == ["motion"]
-    assert model.states[1]["results"][0]["observation"]["event_count"] == 1
-    assert model.states[2]["previous_heart"]["events"][0]["window_s"] == [465, 960]
+    assert run.steps[0].args == {"event": 1}
+    assert run.steps[0].result["during"]["window_s"] == [465, 960]
     assert "0.0368 g RMS" in render(run)
+    assert run.model_calls == 1
 
 
 def test_no_event_prevents_invalid_reference():
-    model = ScriptedModel('{"action":"heart"}', '{"action":"motion","args":{"event":1}}', '{"action":"finish"}')
-    run = Agent(model, load_recording("steady")).run("Find a rise and check wrist motion.")
-    assert run.status == "ok"
-    assert [step.action for step in run.steps] == ["heart"]
-    assert run.errors == ["The heart result has no event with that ID."]
-    assert model.states[-1]["results"][0]["observation"]["events"] == []
+    question = "Find a rise in heart rate and check wrist motion."
+    steady = Agent(ScriptedModel("motion"), load_recording("steady")).run(question)
+    rising = Agent(ScriptedModel("motion"), load_recording("rising")).run(question)
+    assert steady.status == rising.status == "ok"
+    assert steady.stop_reason == "no_event_evidence"
+    assert steady.safeguards == ["event_followup_unavailable"]
+    assert [step.action for step in steady.steps] == ["heart"]
+    assert [step.action for step in rising.steps] == ["heart", "motion"]
+    assert [step.selected_by for step in rising.steps] == ["prerequisite", "model_goal"]
+    assert rising.steps[-1].args == {"event": 1}
+    assert steady.model_calls == rising.model_calls == 1
 
 
-@pytest.mark.parametrize("action", ["clarify", "unsupported"])
-def test_valid_no_tool_response(action):
-    model = ScriptedModel(json.dumps({"action": action}))
-    run = Agent(model, load_recording("steady")).run("Some request")
-    assert run.status == action and not run.steps
+@pytest.mark.parametrize("label", ["unsupported", "diagnose"])
+def test_valid_no_tool_response(label):
+    run = Agent(ScriptedModel(label), load_recording("steady")).run("Can you diagnose this?")
+    assert run.status == "unsupported" and not run.steps
+    assert run.stop_reason == "model_declined"
 
 
 def test_malformed_and_invalid_arguments_are_not_executed():
-    model = ScriptedModel("invented text", '{"action":"compare","args":{"a":[0,60],"b":[60,"120"]}}')
-    run = Agent(model, load_recording("steady")).run("Compare two intervals.")
-    assert run.status == "error"
-    assert len(run.errors) == 2 and not run.steps
+    rec = load_recording("steady")
+    invalid = Agent(ScriptedModel('{"action":"compare","a":[0,60],"b":[60,"120"]}'), rec)
+    run = invalid.run("Compare two intervals.")
+    assert run.status == "error" and run.stop_reason == "invalid_goal"
+    assert not run.steps
+
+    out_of_bounds = Agent(ScriptedModel("compare"), rec)
+    run = out_of_bounds.run("Compare seconds 0 to 60 and 60 to 1000 seconds.")
+    assert run.status == "clarify" and not run.steps
+    assert run.safeguards == ["invalid_tool_arguments"]
 
 
-def test_repeat_and_fabricated_evidence_cannot_finish():
-    model = ScriptedModel('{"action":"quality"}', '{"action":"quality"}',
-                          '{"action":"finish","args":{"evidence":[5]}}')
+def test_goal_completion_needs_no_repeat_or_model_supplied_evidence():
+    model = ScriptedModel("quality")
     run = Agent(model, load_recording("offset")).run("Check quality.")
-    assert run.status == "error"
-    assert len(run.steps) == 1 and len(run.errors) == 2
+    assert run.status == "ok" and run.stop_reason == "goal_satisfied"
+    assert len(run.steps) == run.model_calls == 1
+    assert run.shown == run.steps
+    forged = Agent(ScriptedModel('{"action":"finish","evidence":[5]}'), load_recording("offset"))
+    assert forged.run("Check quality.").stop_reason == "invalid_goal"
+
+
+def test_clarifies_missing_and_unobserved_references():
+    rec = load_recording("rising")
+    run = Agent(ScriptedModel("compare"), rec).run("Compare two time windows.")
+    assert run.status == "clarify" and run.stop_reason == "missing_reference"
+    assert not run.steps
+    run = Agent(ScriptedModel("motion"), rec).run("Check movement during event 99.")
+    assert run.status == "clarify" and run.stop_reason == "unresolved_event"
+    assert [step.action for step in run.steps] == ["heart"]
+
+
+def test_model_can_choose_between_observed_events():
+    from wearable.data import Recording, Second
+
+    values = [60] * 120 + [80] * 30 + [60] * 20 + [90] * 30
+    rec = Recording("test", "Synthetic", "", tuple(Second(hr, 0.03, 1, 32) for hr in values), 1, 32)
+    model = ScriptedModel("motion", "2")
+    run = Agent(model, rec).run("Check wrist movement at the earlier event.")
+    assert run.status == "ok" and run.model_calls == 2
+    assert '"id": 2' in model.requests[-1][-1].content
+    assert run.steps[-1].args == {"event": 2}
+    assert run.steps[-1].result["during"]["window_s"] == [120, 150]
 
 
 def test_endpoint_connection_failure():
@@ -80,15 +116,17 @@ def test_model_configuration_rejects_nonlocal_endpoint(monkeypatch):
         make_model()
 
 
-def test_flat_action_keeps_strict_argument_validation():
-    model = ScriptedModel('{"action":"heart"}', '{"action":"motion","event":"1"}',
-                          '{"action":"motion","event":1}', '{"action":"finish"}')
-    run = Agent(model, load_recording("rising")).run("Find movement at the largest rise.")
-    assert run.status == "ok"
-    assert [step.action for step in run.steps] == ["heart", "motion"]
-    assert run.steps[-1].args == {"event": 1}
-    assert len(run.errors) == 1
-    assert model.states[-1]["last_error"] is None
+def test_explicit_interval_units_and_unusable_ranges():
+    from wearable.references import explicit_windows
+
+    assert explicit_windows("minute 0 to 1 with minute 1 to 2") == [[0, 60], [60, 120]]
+    assert explicit_windows("00:40–02:00 and 180 to 240 seconds") == [[40, 120], [180, 240]]
+    assert explicit_windows("0-60 seconds and 60-120 seconds") == [[0, 60], [60, 120]]
+    assert explicit_windows("from 01:00 to 02:00.") == [[60, 120]]
+    assert explicit_windows("first two minutes") == [[0, 120]]
+    assert explicit_windows("-5 to 10 seconds") == []
+    assert explicit_windows("0.5 to 1.5 minutes") == []
+    assert explicit_windows("00:75 to 02:00") == []
 
 
 def test_langchain_sends_mimoe_completion_cap(monkeypatch):
@@ -114,5 +152,5 @@ def test_langchain_sends_mimoe_completion_cap(monkeypatch):
     monkeypatch.setattr("wearable.agent.httpx.Client", LocalClient)
     answer = make_model().invoke("Check the recording.")
     assert answer.response_metadata["model_name"] == "test-model"
-    assert sent[0]["max_tokens"] == 96
+    assert sent[0]["max_tokens"] == 12
     assert "max_completion_tokens" not in sent[0]

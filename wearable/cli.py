@@ -110,7 +110,8 @@ def render(run):
 
 
 def show_step(tool, step):
-    print(f"  → {tool} {json.dumps(step.args, separators=(',', ':'))}", flush=True)
+    source = "prerequisite" if step.selected_by == "prerequisite" else "model goal"
+    print(f"  → {tool} {json.dumps(step.args, separators=(',', ':'))} [{source}]", flush=True)
 
 
 def menu():

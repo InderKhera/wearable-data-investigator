@@ -1,13 +1,12 @@
-"""A bounded LangChain action loop over read-only wearable analysis tools."""
+"""Select a wearable analysis goal with LangChain and execute its bounded tools."""
 import json
 import os
 from dataclasses import dataclass, field
 from time import perf_counter
-from typing import Literal
 from urllib.parse import urlparse
 
 import httpx
-from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_core.tools import StructuredTool
 from langchain_openai import ChatOpenAI
 from langsmith import tracing_context
@@ -16,25 +15,27 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from . import analysis as analytics
 from .data import Recording
+from .references import BASELINE_REFERENCE, EVENT_ID, EVENT_REFERENCE, TOP_EVENT, explicit_windows
 
-DEFAULT_MODEL = "SmolLM2-360M-Instruct-Q2_K"
+DEFAULT_MODEL = "qwen2.5-0.5b-instruct-q4_k_m"
 DEFAULT_URL = "http://127.0.0.1:8083/mimik-ai/openai/v1"
-MAX_STEPS = 6
+MAX_TOOL_CALLS = 2
 
-PROMPT = """Choose the next step in a wearable data investigation. Return exactly one JSON object.
-Use action "quality" for gaps, missing samples or sensor coverage.
-Use action "heart" to find heart-rate elevations.
-Use action "motion" with event ID (event) or elapsed seconds (window) to inspect wrist movement.
-Use action "compare" with two elapsed second windows (a, b), or event to compare it with baseline.
-Use action "clarify" if required intervals are unspecified, and "unsupported" for diagnosis or unrelated tasks.
-Use action "finish" when the current tool results answer the question.
-Examples: {"action":"quality"}
-{"action":"motion","event":1}
-{"action":"compare","a":[0,60],"b":[60,120]}
-For an event-based motion or comparison question, first find events with heart unless already observed.
-If heart found no event, finish. If it found an event, use its ID for the requested motion or comparison.
-Use observed event IDs only, and convert minutes to seconds. Do not repeat a successful call.
+ROUTE_PROMPT = """Classify the user's wearable analysis request. Reply with one label.
+quality = check recording coverage, sensor availability or missing measurements
+heart = find or summarize heart-rate events
+motion = measure wrist movement, including during a heart-rate event
+compare = contrast two time windows or compare an event with a baseline
+unsupported = diagnose a condition, give medical advice, or an unrelated request
+When the user wants both heart rate and movement, choose motion. When the user wants a comparison, choose compare.
 """
+ROUTE_EXAMPLES = (
+    ("Is this recording complete?", "quality"),
+    ("When did pulse stay elevated?", "heart"),
+    ("Was there wrist motion during the pulse spike?", "motion"),
+    ("Compare minutes 2–3 and 4–5.", "compare"),
+    ("Does this indicate heart disease?", "unsupported"),
+)
 
 
 class StrictModel(BaseModel):
@@ -56,20 +57,12 @@ class CompareArgs(StrictModel):
     b: list[int] | None = Field(default=None, min_length=2, max_length=2)
 
 
-class Action(StrictModel):
-    action: Literal["quality", "heart", "motion", "compare", "finish", "clarify", "unsupported"]
-    args: dict = Field(default_factory=dict)
-
-
-class FinishArgs(StrictModel):
-    evidence: list[int] | None = Field(default=None, min_length=1, max_length=5)
-
-
 @dataclass
 class Step:
     action: str
     args: dict
     result: dict
+    selected_by: str = "model_goal"
 
 
 @dataclass
@@ -81,6 +74,9 @@ class Run:
     errors: list[str] = field(default_factory=list)
     model_calls: int = 0
     elapsed_s: float = 0.0
+    goal: str | None = None
+    stop_reason: str = ""
+    safeguards: list[str] = field(default_factory=list)
 
 
 def make_model() -> ChatOpenAI:
@@ -95,7 +91,7 @@ def make_model() -> ChatOpenAI:
     if not token:
         raise ValueError("Set MIMOE_API_KEY to the token shown by Studio.")
     return ChatOpenAI(base_url=base, api_key=token, model=os.getenv("MIMOE_MODEL", DEFAULT_MODEL),
-                      temperature=0, extra_body={"max_tokens": 96}, timeout=25, max_retries=0,
+                      temperature=0, extra_body={"max_tokens": 12}, timeout=25, max_retries=0,
                       use_responses_api=False, http_client=httpx.Client(trust_env=False))
 
 
@@ -109,35 +105,6 @@ def model_error(error: Exception) -> str:
     if error.status_code == 404:
         return "mimOE returned HTTP 404. Verify the model ID and base URL in Studio."
     return f"mimOE returned HTTP {error.status_code}. Check the selected model in Studio."
-
-
-def parse_action(content: str) -> Action:
-    content = content.strip()
-    if content.startswith("```json\n") and content.endswith("\n```"):
-        content = content[8:-4]
-    # Accept the original envelope and the flat form. Per-tool validation
-    # still rejects unknown fields, wrong types, and unobserved event IDs.
-    try:
-        value = json.loads(content)
-    except json.JSONDecodeError as error:
-        raise ValueError("Expected one complete JSON action.") from error
-    if isinstance(value, dict) and "action" in value and "args" not in value:
-        name = value.pop("action")
-        value = {"action": name, "args": value}
-    return Action.model_validate(value)
-
-
-def compact(step: Step) -> dict:
-    """Return a small observation to the model. Full evidence stays in Python."""
-    if step.action == "heart":
-        return {key: step.result[key] for key in ("status", "event_count", "events")}
-    if step.action == "quality":
-        return {name: {"available": signal["available"], "missing_s": signal["missing_s"]}
-                for name, signal in step.result["signals"].items()}
-    if step.action == "motion":
-        return {"relative_motion": step.result["relative_motion"],
-                "during_s": step.result["during"]["window_s"]}
-    return {key: step.result[key] for key in ("b_minus_a_bpm", "b_minus_a_motion_g")}
 
 
 class Agent:
@@ -185,76 +152,114 @@ class Agent:
         start = perf_counter()
         steps: list[Step] = []
         errors: list[str] = []
+        safeguards: list[str] = []
         seen = set()
         calls = 0
-        pending_error = None
+        goal = None
 
-        def result(status, message="", shown=None):
+        def result(status, reason, message="", shown=None):
             return Run(status, steps, steps if shown is None else shown, message, errors,
-                       calls, round(perf_counter() - start, 3))
+                       calls, round(perf_counter() - start, 3), goal, reason, safeguards)
 
-        if not question.strip() or len(question) > 1500:
-            return result("clarify", "Enter a question between 1 and 1500 characters.")
-        for _ in range(MAX_STEPS):
-            state = {
-                "duration_s": self.recording.duration,
-                "question": question,
-                "previous_heart": compact(self.last_heart) if self.last_heart and
-                not any(step.action == "heart" for step in steps) else None,
-                "results": [{"id": i, "tool": step.action, "observation": compact(step)}
-                            for i, step in enumerate(steps, 1)],
-                "last_error": pending_error,
-            }
-            try:
-                calls += 1
-                with tracing_context(enabled=False):
-                    message = self.model.invoke([SystemMessage(content=PROMPT),
-                                                 HumanMessage(content=json.dumps(state))])
-            except (APIConnectionError, APIStatusError) as error:
-                return result("error", model_error(error))
+        def choose(messages, labels):
+            nonlocal calls
+            calls += 1
+            with tracing_context(enabled=False):
+                answer = self.model.invoke(messages)
             if on_response is not None:
-                on_response(message)
-            try:
-                if not isinstance(message.content, str):
-                    raise ValueError("Expected a text action.")
-                action = parse_action(message.content)
-                if action.action == "finish":
-                    requested = FinishArgs.model_validate(action.args).evidence
-                    if not steps:
-                        raise ValueError("Run at least one tool before finishing.")
-                    indices = requested or list(range(1, len(steps) + 1))
-                    if len(set(indices)) != len(indices) or any(not 1 <= i <= len(steps) for i in indices):
-                        raise ValueError("Evidence must contain distinct IDs from this turn.")
-                    return result("ok", shown=[steps[i - 1] for i in indices])
-                if action.action in {"clarify", "unsupported"}:
-                    Empty.model_validate(action.args)
-                    message = ("Which elapsed time window or detected event should I use?"
-                               if action.action == "clarify" else
-                               "I can investigate recorded heart rate, wrist motion and signal quality.")
-                    return result(action.action, message)
-                tool = self.tools[action.action]
-                args = tool.args_schema.model_validate(action.args).model_dump(exclude_none=True)
-                signature = (action.action, json.dumps(args, sort_keys=True))
-                if signature in seen:
-                    raise ValueError("This tool already ran with those arguments. Use its result.")
-                output = tool.invoke(args)
-                seen.add(signature)
-            except (ValidationError, ValueError) as error:
-                if isinstance(error, ValidationError):
-                    issue = error.errors()[0]
-                    reason = f"{'.'.join(map(str, issue['loc'])) or 'action'}: {issue['msg']}"
-                else:
-                    reason = str(error)
-                errors.append(reason)
-                pending_error = reason
-                if len(errors) >= 2:
-                    return result("error", "The local model failed to produce a valid next action after one repair.")
-                continue
-            pending_error = None
-            step = Step(action.action, args, output)
+                on_response(answer)
+            label = answer.content.strip().lower() if isinstance(answer.content, str) else ""
+            if label not in labels:
+                errors.append("Model reply was not an allowed label.")
+                return None
+            return labels[label]
+
+        def execute(name, args, selected_by="model_goal"):
+            tool = self.tools[name]
+            args = tool.args_schema.model_validate(args).model_dump(exclude_none=True)
+            signature = (name, json.dumps(args, sort_keys=True))
+            if signature in seen or len(steps) >= MAX_TOOL_CALLS:
+                raise ValueError("Duplicate call or tool budget exceeded.")
+            output = tool.invoke(args)
+            seen.add(signature)
+            step = Step(name, args, output, selected_by)
             steps.append(step)
-            if action.action == "heart":
+            if name == "heart":
                 self.last_heart = step
             if on_step is not None:
                 on_step(tool.name, step)
-        return result("error", "The investigation reached its action limit. Any available evidence is shown below.")
+
+        if not question.strip() or len(question) > 1500:
+            return result("clarify", "invalid_question", "Enter a question between 1 and 1500 characters.")
+        try:
+            messages = [SystemMessage(ROUTE_PROMPT)]
+            for sample, label in ROUTE_EXAMPLES:
+                messages.extend((HumanMessage(sample), AIMessage(label)))
+            messages.append(HumanMessage(question))
+            labels = {name: name for name in self.tools}
+            labels.update(unsupported="unsupported", diagnose="unsupported")
+            goal = choose(messages, labels)
+            if goal is None:
+                return result("error", "invalid_goal", "The model did not select a supported investigation.")
+            if goal == "unsupported":
+                return result("unsupported", "model_declined",
+                              "I can investigate recorded heart rate, wrist motion and signal quality.")
+            if goal in {"quality", "heart"}:
+                execute(goal, {})
+                return result("ok", "goal_satisfied")
+
+            windows = explicit_windows(question)
+            if goal == "compare" and len(windows) == 2:
+                execute(goal, {"a": windows[0], "b": windows[1]})
+                return result("ok", "goal_satisfied")
+            if goal == "motion" and len(windows) == 1:
+                execute(goal, {"window": windows[0]})
+                return result("ok", "goal_satisfied")
+
+            needs_event = EVENT_REFERENCE.search(question) and (
+                (goal == "motion" and not windows) or
+                (goal == "compare" and (len(windows) == 1 or
+                 (not windows and BASELINE_REFERENCE.search(question))))
+            )
+            if not needs_event:
+                safeguards.append("missing_reference")
+                return result("clarify", "missing_reference",
+                              "Specify the elapsed time window(s) or a heart-rate event and reference period.")
+            if self.last_heart is None:
+                execute("heart", {}, "prerequisite")
+            evidence = self.last_heart
+            events = evidence.result["events"]
+            if not events:
+                safeguards.append("event_followup_unavailable")
+                return result("ok", "no_event_evidence", shown=[evidence])
+
+            explicit_id = EVENT_ID.search(question)
+            if explicit_id:
+                event = int(explicit_id[1])
+            elif len(events) == 1 or TOP_EVENT.search(question):
+                event = events[0]["id"]
+            else:
+                # When more than one observed event fits the scope, the model
+                # can resolve the reference or ask for clarification.
+                labels = {str(item["id"]): item["id"] for item in events}
+                labels["clarify"] = None
+                event = choose([
+                    SystemMessage("Select the event requested by the user. Reply with one observed ID, "
+                                  "or clarify if the reference is ambiguous."),
+                    HumanMessage(f"Question: {question}\nObserved events: {json.dumps(events)}"),
+                ], labels)
+            if event not in {item["id"] for item in events}:
+                safeguards.append("unresolved_event")
+                return result("clarify", "unresolved_event", "Which observed event should I use?",
+                              shown=[evidence])
+            args = {"event": event}
+            if goal == "compare" and windows and windows[0] != [0, analytics.BASELINE_S]:
+                args = {"a": windows[0], "b": list(self._event_window(event))}
+            execute(goal, args)
+            return result("ok", "goal_satisfied")
+        except (APIConnectionError, APIStatusError) as error:
+            return result("error", "inference_error", model_error(error))
+        except (ValidationError, ValueError) as error:
+            safeguards.append("invalid_tool_arguments")
+            errors.append(str(error))
+            return result("clarify", "invalid_tool_arguments", "Provide valid elapsed windows within the recording.")

@@ -30,6 +30,8 @@ CASES = [
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--smoke", action="store_true", help="Only check live Chat Completions via LangChain")
+    parser.add_argument("--extended", action="store_true",
+                        help="Also repeat the paired investigation and test paraphrases")
     parser.add_argument("--output", type=Path, help="Save actual results as JSON")
     parser.add_argument("--capture-responses", action="store_true",
                         help="Include raw model replies and completion metadata in the JSON report")
@@ -64,7 +66,7 @@ def main():
 
     outcomes = []
 
-    def execute(name, agent, question, expected, status, expected_args):
+    def execute(name, agent, question, expected, status, expected_args, goal=None):
         responses = []
         served_models = set()
 
@@ -78,18 +80,22 @@ def main():
         shown = [step.action for step in run.shown]
         passed = (served_models == {model_id} and run.status == status and actual == expected and shown == expected
                   and (expected_args is None or run.steps[-1].args == expected_args))
-        print(f"{'PASS' if passed else 'FAIL'} {name}: {actual} ({run.status}, {run.elapsed_s:.2f}s, "
-              f"{len(run.errors)} invalid actions)", flush=True)
+        print(f"{'PASS' if passed else 'FAIL'} {name}: goal={run.goal}, {actual} "
+              f"({run.status}, {run.stop_reason}, {run.elapsed_s:.2f}s, {len(run.errors)} rejected replies)",
+              flush=True)
         outcomes.append({"name": name, "recording": agent.recording.key, "question": question,
                          "expected_tools": expected, "expected_args": expected_args, "expected_status": status,
                          "served_models": sorted(str(name) for name in served_models),
+                         "expected_goal": goal or ("compare" if status == "clarify" else
+                                                   "unsupported" if status == "unsupported" else expected[-1]),
                          "passed": passed, "run": asdict(run), "displayed": render(run)})
         if args.capture_responses:
             outcomes[-1]["responses"] = responses
         return run
 
     for name, key, question, expected, status, expected_args in CASES:
-        execute(name, Agent(model, load_recording(key)), question, expected, status, expected_args)
+        execute(name, Agent(model, load_recording(key)), question, expected, status, expected_args,
+                goal="motion" if name == "no_rise_to_check" else None)
     agent = Agent(model, load_recording("rising"))
     execute("followup_setup", agent, "Find sustained heart-rate elevations.", ["heart"], "ok", None)
     execute("followup", agent, "How much wrist movement was recorded around that first event?",
@@ -97,10 +103,34 @@ def main():
 
     passed = sum(item["passed"] for item in outcomes)
     print(f"{passed}/{len(outcomes)} live cases passed ({model_id}).")
+    original = outcomes.copy()
+    print(f"Correct goal selections: {sum(c['run']['goal'] == c['expected_goal'] for c in original)}/"
+          f"{len(original)}. Completed tools: {sum(len(c['run']['steps']) for c in original)}.")
+    if args.extended:
+        for attempt in (2, 3):
+            for key, expected, event_args in (
+                ("rising", ["heart", "motion"], {"event": 1}), ("steady", ["heart"], None),
+            ):
+                execute(f"{key}_pair_{attempt}", Agent(model, load_recording(key)), EXAMPLES[2],
+                        expected, "ok", event_args, goal="motion")
+        for name, key, question, tools, args_ in (
+            ("coverage_paraphrase", "offset", "Did either channel miss any samples?", ["quality"], None),
+            ("motion_paraphrase", "rising", "Was the biggest pulse spike accompanied by wrist activity?",
+             ["heart", "motion"], {"event": 1}),
+            ("comparison_paraphrase", "offset",
+             "Contrast 00:00–01:00 with 01:00–02:00 for heart rate and wrist movement.",
+             ["compare"], {"a": [0, 60], "b": [60, 120]}),
+        ):
+            execute(name, Agent(model, load_recording(key)), question, tools, "ok", args_)
+    extended = outcomes[len(original):]
+    if extended:
+        print(f"{sum(c['passed'] for c in extended)}/{len(extended)} extended cases passed.")
     if args.output:
-        args.output.write_text(json.dumps({"model": model_id, "cases": outcomes}, indent=2) + "\n",
-                               encoding="utf-8")
-    return int(passed != len(outcomes))
+        report = {"model": model_id, "cases": original}
+        if extended:
+            report["extended_cases"] = extended
+        args.output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    return int(not all(c["passed"] for c in outcomes))
 
 
 if __name__ == "__main__":

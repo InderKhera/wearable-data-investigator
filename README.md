@@ -1,6 +1,6 @@
 # Wearable-Data Investigation Agent
 
-A local LangChain agent for investigating heart rate, wrist movement, and signal quality in real wearable recordings. It sends natural-language requests and compact tool observations to a model running in **mimOE Studio**. Python calculates and displays the evidence.
+A local LangChain agent for investigating heart rate, wrist movement, and signal quality in real wearable recordings. A model running in **mimOE Studio** selects an analysis goal from the user's request. Python resolves the inputs, runs the tools, and displays the evidence.
 
 ![Heart rate and wrist acceleration for the rising excerpt. Shading marks the reference window and detected event.](docs/rising-recording.png)
 
@@ -8,7 +8,7 @@ The figure uses an attributed PhysioNet recording. See [data provenance and lice
 
 ## Run locally
 
-Use Python 3.11 or newer and [mimOE Studio](https://developer.mimik.com/mimOE-studio-early-access-download-v2). In Studio, connect to the local runtime, select and load the local model in Model View, and open **API** to get its model ID, base URL, and token. Use a model that can pass the action evaluation below. SmolLM2 360M Q2 and Qwen2.5 0.5B Q4 both served live chat on the development Mac. Neither completed the live agent suite reliably. See the [model compatibility results](docs/evaluation.md) before using the interview demo.
+Use Python 3.11 or newer and [mimOE Studio](https://developer.mimik.com/mimOE-studio-early-access-download-v2). Connect Studio to the local runtime and load **Qwen2.5-0.5B-Instruct Q4_K_M**. In Model View, open **API** to confirm the model ID and token. The tested ID is `qwen2.5-0.5b-instruct-q4_k_m`. Keep only the model you are testing loaded.
 
 ```sh
 python3 -m venv .venv
@@ -18,10 +18,11 @@ cp .env.example .env
 # Edit .env to match the Studio API panel, then load it.
 source .env
 python -m wearable.evaluate --smoke
+python -m wearable.evaluate
 python -m wearable.cli
 ```
 
-Set `MIMOE_BASE_URL` to the Chat Completions base URL ending in `/v1`. The default is `http://127.0.0.1:8083/mimik-ai/openai/v1`. Use the exact Studio model ID in `MIMOE_MODEL` and the token value without the `Bearer` prefix in `MIMOE_API_KEY`. Keep `.env` private. The application accepts loopback endpoints and disables remote tracing during inference.
+Set `MIMOE_BASE_URL` to the Chat Completions base URL ending in `/v1`. The tested base URL is `http://localhost:8083/mimik-ai/openai/v1`. Use the exact Studio model ID in `MIMOE_MODEL` and the token value without the `Bearer` prefix in `MIMOE_API_KEY`. Keep `.env` private. The application accepts loopback endpoints and disables remote tracing during inference.
 
 ## Try it
 
@@ -38,7 +39,7 @@ Enter your own question or a follow-up such as “How much wrist movement was re
 
 ```sh
 python -m wearable.cli --recording offset \
-  --question "Compare elapsed minute zero to one with minute one to two."
+  --question "Contrast minute 0 to 1 with minute 1 to 2 for pulse and motion."
 ```
 
 Add `--json` to a single question to inspect full structured results.
@@ -47,16 +48,17 @@ Add `--json` to a single question to inspect full structured results.
 
 ```mermaid
 flowchart LR
-    U[CLI question] --> M[LangChain ChatOpenAI]
-    M <--> L[Local mimOE model]
-    M --> V[Validate action and arguments]
-    V --> T[Run one analysis tool]
-    T --> O[Compact observation]
-    O --> M
-    V -->|Finish with evidence| R[Render verified values]
+    U[CLI question] --> M[Qwen via LangChain and mimOE]
+    M -->|Analysis goal| V[Resolve references and prerequisites]
+    V --> T[Run validated analysis]
+    T -->|Event evidence if needed| V
+    V -->|Multiple possible events| M
+    T -->|Evidence satisfies the goal| R[Render tool results]
 ```
 
-The LLM chooses the next action from the question and prior observations. For example, it can ask for motion evidence after seeing an event ID. The controller validates each action, resolves event IDs against actual results, blocks repeated calls, and limits each turn to six model calls. It allows one repair after an invalid response. A model can choose which tool evidence to display. The final numbers, units, and interpretations of comparison direction come from the executed tools.
+Qwen chooses a goal such as signal quality, heart-rate events, wrist movement, or comparison. Python extracts literal elapsed-time windows and validates them. If a selected goal needs an event, the controller reuses the latest search for that recording or runs a prerequisite search. An empty search ends the investigation with the available evidence. When several observed events could match a reference, the model can choose an observed ID or ask for clarification.
+
+Each turn allows at most two tool executions and blocks identical calls. The controller ends the turn when the requested analysis has run or when a required reference is unavailable. The CLI labels steps as **model goal** or **prerequisite** and renders values and limitations from actual tool results.
 
 | LangChain tool | Deterministic analysis |
 |---|---|
@@ -65,7 +67,7 @@ The LLM chooses the next action from the question and prior observations. For ex
 | `analyze_activity_context` | Compare wrist-motion variability before, during, and after a supplied window or observed event. |
 | `compare_intervals` | Compare HR and wrist-motion statistics in two explicit elapsed windows or against the baseline. |
 
-The action protocol uses ordinary Chat Completions text and local Pydantic validation. LangChain provides the model client, message types, and structured tools. This design leaves native function calling and server-enforced JSON optional.
+The model replies with a short allowlisted label through ordinary Chat Completions. LangChain provides the model client and structured tools. Pydantic checks the arguments before execution. For an explicit window, use numeric seconds, numeric minutes, or MM:SS ranges. For a comparison against the start of the excerpt, a phrase like “first two minutes” also works.
 
 ## How to interpret the data
 
@@ -77,7 +79,7 @@ See [data provenance](data/README.md) for sample selection, source hashes, redis
 
 ## Verified results and tests
 
-See [evaluation notes](docs/evaluation.md) for measured outputs, tool traces, and model compatibility. The analysis and scripted controller tests are independent of Studio. The live evaluation checks actual local model responses, including tool arguments, appropriate stopping, and the same movement question on both an event and a no-event recording.
+The bounded controller passed **11/11 original live cases** with Qwen2.5 0.5B and all four guided CLI prompts. The same movement request succeeded three times per recording on `rising` and `steady`, with different tool traces based on the event evidence. Two of three additional paraphrases passed. Qwen declined “Did either channel miss any samples?” as unsupported. See the [evaluation notes](docs/evaluation.md) and [recorded CLI walkthrough](docs/live-qwen-0.5b-bounded-cli.txt).
 
 ```sh
 python -m pip install -r requirements-dev.txt
@@ -86,6 +88,6 @@ mkdir -p .source-data
 python -m wearable.evaluate --output .source-data/live-evaluation.json
 ```
 
-The evaluator returns a nonzero exit code when any expected behavior fails. The bundled samples provide example cases for a focused evaluation. Future work could test more recordings, introduce robust local baselines, or extend explicit time-window parsing and comparison across matched sessions.
+Use `--extended` to repeat the paired demo and try three additional phrasings. It returns a nonzero exit code if any additional case fails. The checks cover a small collection of prompts and recordings. The model can still misclassify unfamiliar phrasings.
 
 AI assistance supported implementation and documentation. The repository records tests and measured outcomes separately from planned behavior.
