@@ -21,25 +21,19 @@ DEFAULT_MODEL = "SmolLM2-360M-Instruct-Q2_K"
 DEFAULT_URL = "http://127.0.0.1:8083/mimik-ai/openai/v1"
 MAX_STEPS = 6
 
-PROMPT = """You operate a wearable data investigator. Reply with one JSON action and nothing else.
-Actions:
-{"action":"quality"} checks sensor coverage and missing data.
-{"action":"heart"} finds sustained heart-rate elevations and summarizes heart rate.
-{"action":"motion","args":{"event":1}} measures movement around event 1 from heart results.
-{"action":"motion","args":{"window":[60,120]}} measures movement at explicit elapsed seconds.
-{"action":"compare","args":{"a":[0,60],"b":[60,120]}} compares explicit elapsed windows.
-{"action":"compare","args":{"event":1}} compares event 1 to the first 120 seconds.
-{"action":"finish"} displays the current tool results.
-{"action":"clarify"} asks for an event or elapsed time window.
-{"action":"unsupported"} handles requests outside wearable measurements, including diagnosis and advice.
-Use half-open seconds, converting minutes to seconds. Stay within the recording.
-If asked about movement or comparison at the biggest heart-rate rise, call heart first unless a heart result is already available. Then choose motion or compare as requested. Use event 1 for the biggest event. If heart found no events, finish with that result. Never invent an event ID.
-For an isolated quality or heart question, use that tool and then finish. For explicit windows, compare directly. A tool error is an observation you may correct. Never repeat a successful call in the same turn.
-Example:
-Question: Was the strongest heart-rate rise accompanied by wrist motion?
-With no evidence: {"action":"heart"}
-After heart found event 1: {"action":"motion","args":{"event":1}}
-After motion, or if heart found no events: {"action":"finish"}
+PROMPT = """Choose the next step in a wearable data investigation. Return exactly one JSON object.
+Use action "quality" for gaps, missing samples or sensor coverage.
+Use action "heart" to find heart-rate elevations.
+Use action "motion" with event ID (event) or elapsed seconds (window) to inspect wrist movement.
+Use action "compare" with two elapsed second windows (a, b), or event to compare it with baseline.
+Use action "clarify" if required intervals are unspecified, and "unsupported" for diagnosis or unrelated tasks.
+Use action "finish" when the current tool results answer the question.
+Examples: {"action":"quality"}
+{"action":"motion","event":1}
+{"action":"compare","a":[0,60],"b":[60,120]}
+For an event-based motion or comparison question, first find events with heart unless already observed.
+If heart found no event, finish. If it found an event, use its ID for the requested motion or comparison.
+Use observed event IDs only, and convert minutes to seconds. Do not repeat a successful call.
 """
 
 
@@ -101,7 +95,7 @@ def make_model() -> ChatOpenAI:
     if not token:
         raise ValueError("Set MIMOE_API_KEY to the token shown by Studio.")
     return ChatOpenAI(base_url=base, api_key=token, model=os.getenv("MIMOE_MODEL", DEFAULT_MODEL),
-                      temperature=0, max_tokens=192, timeout=25, max_retries=0,
+                      temperature=0, extra_body={"max_tokens": 96}, timeout=25, max_retries=0,
                       use_responses_api=False, http_client=httpx.Client(trust_env=False))
 
 
@@ -121,7 +115,16 @@ def parse_action(content: str) -> Action:
     content = content.strip()
     if content.startswith("```json\n") and content.endswith("\n```"):
         content = content[8:-4]
-    return Action.model_validate_json(content)
+    # Accept the original envelope and the flat form. Per-tool validation
+    # still rejects unknown fields, wrong types, and unobserved event IDs.
+    try:
+        value = json.loads(content)
+    except json.JSONDecodeError as error:
+        raise ValueError("Expected one complete JSON action.") from error
+    if isinstance(value, dict) and "action" in value and "args" not in value:
+        name = value.pop("action")
+        value = {"action": name, "args": value}
+    return Action.model_validate(value)
 
 
 def compact(step: Step) -> dict:
@@ -178,12 +181,13 @@ class Agent:
             return analytics.compare_intervals(self.recording, tuple(a), tuple(b))
         raise ValueError("Give one event ID or both windows a and b.")
 
-    def run(self, question: str, on_step=None) -> Run:
+    def run(self, question: str, on_step=None, on_response=None) -> Run:
         start = perf_counter()
         steps: list[Step] = []
         errors: list[str] = []
         seen = set()
         calls = 0
+        pending_error = None
 
         def result(status, message="", shown=None):
             return Run(status, steps, steps if shown is None else shown, message, errors,
@@ -199,7 +203,7 @@ class Agent:
                 not any(step.action == "heart" for step in steps) else None,
                 "results": [{"id": i, "tool": step.action, "observation": compact(step)}
                             for i, step in enumerate(steps, 1)],
-                "last_error": errors[-1] if errors else None,
+                "last_error": pending_error,
             }
             try:
                 calls += 1
@@ -208,6 +212,8 @@ class Agent:
                                                  HumanMessage(content=json.dumps(state))])
             except (APIConnectionError, APIStatusError) as error:
                 return result("error", model_error(error))
+            if on_response is not None:
+                on_response(message)
             try:
                 if not isinstance(message.content, str):
                     raise ValueError("Expected a text action.")
@@ -237,15 +243,14 @@ class Agent:
                 if isinstance(error, ValidationError):
                     issue = error.errors()[0]
                     reason = f"{'.'.join(map(str, issue['loc'])) or 'action'}: {issue['msg']}"
-                    # JSON parse errors may contain snippets of the model output.
-                    if issue["type"] == "json_invalid":
-                        reason = "Expected one complete JSON action."
                 else:
                     reason = str(error)
                 errors.append(reason)
+                pending_error = reason
                 if len(errors) >= 2:
                     return result("error", "The local model failed to produce a valid next action after one repair.")
                 continue
+            pending_error = None
             step = Step(action.action, args, output)
             steps.append(step)
             if action.action == "heart":

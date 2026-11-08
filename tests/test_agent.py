@@ -78,3 +78,41 @@ def test_model_configuration_rejects_nonlocal_endpoint(monkeypatch):
     monkeypatch.setenv("MIMOE_BASE_URL", "https://example.com/v1")
     with pytest.raises(ValueError, match="loopback"):
         make_model()
+
+
+def test_flat_action_keeps_strict_argument_validation():
+    model = ScriptedModel('{"action":"heart"}', '{"action":"motion","event":"1"}',
+                          '{"action":"motion","event":1}', '{"action":"finish"}')
+    run = Agent(model, load_recording("rising")).run("Find movement at the largest rise.")
+    assert run.status == "ok"
+    assert [step.action for step in run.steps] == ["heart", "motion"]
+    assert run.steps[-1].args == {"event": 1}
+    assert len(run.errors) == 1
+    assert model.states[-1]["last_error"] is None
+
+
+def test_langchain_sends_mimoe_completion_cap(monkeypatch):
+    sent = []
+
+    def respond(request):
+        sent.append(json.loads(request.content))
+        assert request.url.path == "/mimik-ai/openai/v1/chat/completions"
+        return httpx.Response(200, json={
+            "id": "test-completion", "object": "chat.completion", "created": 0,
+            "model": "test-model",
+            "choices": [{"index": 0, "finish_reason": "stop",
+                         "message": {"role": "assistant", "content": "ok"}}],
+        })
+
+    monkeypatch.setenv("MIMOE_BASE_URL", "http://127.0.0.1:8083/mimik-ai/openai/v1")
+    monkeypatch.setenv("MIMOE_API_KEY", "test-token")
+    monkeypatch.setenv("MIMOE_MODEL", "test-model")
+    class LocalClient(httpx.Client):
+        def __init__(self, **options):
+            super().__init__(transport=httpx.MockTransport(respond), **options)
+
+    monkeypatch.setattr("wearable.agent.httpx.Client", LocalClient)
+    answer = make_model().invoke("Check the recording.")
+    assert answer.response_metadata["model_name"] == "test-model"
+    assert sent[0]["max_tokens"] == 96
+    assert "max_completion_tokens" not in sent[0]

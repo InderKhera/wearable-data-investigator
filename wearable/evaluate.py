@@ -1,7 +1,6 @@
 """Run a small live mimOE regression suite and record the actual tool traces."""
 import argparse
 import json
-import os
 from dataclasses import asdict
 from pathlib import Path
 
@@ -9,7 +8,7 @@ from langchain_core.messages import HumanMessage
 from langsmith import tracing_context
 from openai import APIConnectionError, APIStatusError
 
-from .agent import Agent, DEFAULT_MODEL, make_model, model_error
+from .agent import Agent, make_model, model_error
 from .cli import EXAMPLES, render
 from .data import load_recording
 
@@ -32,12 +31,25 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--smoke", action="store_true", help="Only check live Chat Completions via LangChain")
     parser.add_argument("--output", type=Path, help="Save actual results as JSON")
+    parser.add_argument("--capture-responses", action="store_true",
+                        help="Include raw model replies and completion metadata in the JSON report")
     args = parser.parse_args()
+    if args.capture_responses and not args.output:
+        parser.error("--capture-responses requires --output")
     try:
         model = make_model()
+        model_id = model.model_name
+        loaded_ids = [entry.id for entry in model.root_client.models.list().data]
+        if loaded_ids != [model_id]:
+            print(f"Expected exactly one loaded model ({model_id}). mimOE lists: {loaded_ids}.")
+            return 1
         if args.smoke:
             with tracing_context(enabled=False):
-                answer = model.bind(max_tokens=20).invoke([HumanMessage(content="Say hello in one sentence.")])
+                answer = model.bind(extra_body={"max_tokens": 20}).invoke([HumanMessage(content="Say hello in one sentence.")])
+            served = answer.response_metadata.get("model_name")
+            if served != model_id:
+                print(f"Model mismatch: requested {model_id}, served {served}.")
+                return 1
             if not isinstance(answer.content, str) or not answer.content.strip():
                 print("mimOE returned an empty or non-text completion.")
                 return 1
@@ -53,16 +65,27 @@ def main():
     outcomes = []
 
     def execute(name, agent, question, expected, status, expected_args):
-        run = agent.run(question)
+        responses = []
+        served_models = set()
+
+        def observe(answer):
+            served_models.add(answer.response_metadata.get("model_name"))
+            if args.capture_responses:
+                responses.append({"content": answer.content, "metadata": answer.response_metadata})
+
+        run = agent.run(question, on_response=observe)
         actual = [step.action for step in run.steps]
         shown = [step.action for step in run.shown]
-        passed = (run.status == status and actual == expected and shown == expected
+        passed = (served_models == {model_id} and run.status == status and actual == expected and shown == expected
                   and (expected_args is None or run.steps[-1].args == expected_args))
         print(f"{'PASS' if passed else 'FAIL'} {name}: {actual} ({run.status}, {run.elapsed_s:.2f}s, "
               f"{len(run.errors)} invalid actions)", flush=True)
         outcomes.append({"name": name, "recording": agent.recording.key, "question": question,
                          "expected_tools": expected, "expected_args": expected_args, "expected_status": status,
+                         "served_models": sorted(str(name) for name in served_models),
                          "passed": passed, "run": asdict(run), "displayed": render(run)})
+        if args.capture_responses:
+            outcomes[-1]["responses"] = responses
         return run
 
     for name, key, question, expected, status, expected_args in CASES:
@@ -72,7 +95,6 @@ def main():
     execute("followup", agent, "How much wrist movement was recorded around that first event?",
             ["motion"], "ok", {"event": 1})
 
-    model_id = os.getenv("MIMOE_MODEL", DEFAULT_MODEL)
     passed = sum(item["passed"] for item in outcomes)
     print(f"{passed}/{len(outcomes)} live cases passed ({model_id}).")
     if args.output:
