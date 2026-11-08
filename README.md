@@ -17,7 +17,6 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 test -f .env || cp .env.example .env
 # Edit .env to match the Studio API panel, then load it.
-# Edit .env to match the Studio API panel, then load it.
 set -a
 source .env
 set +a
