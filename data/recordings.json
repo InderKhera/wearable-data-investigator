@@ -1,0 +1,65 @@
+{
+  "steady": {
+    "title": "Steadier cycling excerpt",
+    "description": "Six minutes with a comparatively narrow heart-rate range.",
+    "source": "Wearable_Dataset/AEROBIC/S01",
+    "start_s": 130,
+    "duration_s": 360,
+    "signals": {
+      "HR": {
+        "hz": 1,
+        "start_offset_s": 10.0,
+        "source_rows": 2031,
+        "sha256": "d944bb33a7b89f86ac2dc6fe852be04914c7aa593c69896161161fff4dcdd3ab"
+      },
+      "ACC": {
+        "hz": 32,
+        "start_offset_s": 0.0,
+        "source_rows": 65286,
+        "sha256": "d222dd2737337f5c8dce7ad2ab85cc8f600834fca38ee10656021b0fbd2c58b8"
+      }
+    }
+  },
+  "rising": {
+    "title": "Rising heart rate",
+    "description": "Sixteen minutes from a cycling session, with a sustained rise and changing wrist motion.",
+    "source": "Wearable_Dataset/AEROBIC/S04",
+    "start_s": 10,
+    "duration_s": 960,
+    "signals": {
+      "HR": {
+        "hz": 1,
+        "start_offset_s": 10.0,
+        "source_rows": 2031,
+        "sha256": "d054a735f1ea0250327931345cc97082a4c47a2be30c7e7191b588cda87fad90"
+      },
+      "ACC": {
+        "hz": 32,
+        "start_offset_s": 0.0,
+        "source_rows": 65286,
+        "sha256": "916fc43c5b25eb57f79a086e44f397800cddaf9cf19af8797a760865beaf379f"
+      }
+    }
+  },
+  "offset": {
+    "title": "Different sensor start times",
+    "description": "Fifteen minutes with an initial heart-rate coverage gap and changing wrist movement.",
+    "source": "Wearable_Dataset/ANAEROBIC/S08",
+    "start_s": 0,
+    "duration_s": 900,
+    "signals": {
+      "HR": {
+        "hz": 1,
+        "start_offset_s": 10.0,
+        "source_rows": 1190,
+        "sha256": "eb95bca7869d687bc65e3560edce4708ed281a2d5edc2246a3be1806c399559d"
+      },
+      "ACC": {
+        "hz": 32,
+        "start_offset_s": 0.0,
+        "source_rows": 38376,
+        "sha256": "3a76fc5480855ef6bd266d2f298d7a53582a842ad73c32857ba4296bb0ff6054"
+      }
+    }
+  }
+}
