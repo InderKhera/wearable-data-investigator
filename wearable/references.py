@@ -20,6 +20,7 @@ EVENT_REFERENCE = re.compile(
     r"|(?:largest|strongest)\s+(?:rise|increase|elevation|peak|spike))\b", re.IGNORECASE,
 )
 EVENT_ID = re.compile(r"\bevent\s*#?([0-9]{1,5})\b", re.IGNORECASE)
+TIME_ORDER_REFERENCE = re.compile(r"\b(earlier|later)\s+(?:heart[ -]rate\s+)?event\b")
 TOP_EVENT = re.compile(r"\b(?:largest|strongest|biggest|first event)\b", re.IGNORECASE)
 BASELINE_REFERENCE = re.compile(r"\b(?:baseline|reference period)\b", re.IGNORECASE)
 

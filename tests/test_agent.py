@@ -96,9 +96,19 @@ def test_model_can_choose_between_observed_events():
     model = ScriptedModel("motion", "2")
     run = Agent(model, rec).run("Check wrist movement at the earlier event.")
     assert run.status == "ok" and run.model_calls == 2
-    assert '"id": 2' in model.requests[-1][-1].content
+    assert "Earlier event: 2\nLater event: 1" in model.requests[-1][-1].content
     assert run.steps[-1].args == {"event": 2}
     assert run.steps[-1].result["during"]["window_s"] == [120, 150]
+
+    wrong_id = Agent(ScriptedModel("motion", "1"), rec).run("Check wrist movement at the earlier event.")
+    assert wrong_id.status == "clarify"
+    assert "event_choice_conflicts_with_reference" in wrong_id.safeguards
+    assert [step.action for step in wrong_id.steps] == ["heart"]
+
+    unclear = Agent(ScriptedModel("motion"), rec).run("Check wrist movement at an event.")
+    assert unclear.status == "clarify"
+    assert unclear.model_calls == 1
+    assert [step.action for step in unclear.steps] == ["heart"]
 
 
 def test_endpoint_connection_failure():

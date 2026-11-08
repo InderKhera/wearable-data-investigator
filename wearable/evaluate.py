@@ -10,7 +10,7 @@ from openai import APIConnectionError, APIStatusError
 
 from .agent import Agent, make_model, model_error
 from .cli import EXAMPLES, render
-from .data import load_recording
+from .data import Recording, Second, load_recording
 
 # Each case includes an expected trace. Paired recordings reuse the same question.
 CASES = [
@@ -31,7 +31,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--smoke", action="store_true", help="Only check live Chat Completions via LangChain")
     parser.add_argument("--extended", action="store_true",
-                        help="Also repeat the paired investigation and test paraphrases")
+                        help="Also repeat the paired investigation and test paraphrases and event choice")
     parser.add_argument("--output", type=Path, help="Save actual results as JSON")
     parser.add_argument("--capture-responses", action="store_true",
                         help="Include raw model replies and completion metadata in the JSON report")
@@ -78,7 +78,10 @@ def main():
         run = agent.run(question, on_response=observe)
         actual = [step.action for step in run.steps]
         shown = [step.action for step in run.shown]
-        passed = (served_models == {model_id} and run.status == status and actual == expected and shown == expected
+        expected_goal = goal or ("compare" if status == "clarify" else
+                                 "unsupported" if status == "unsupported" else expected[-1])
+        passed = (served_models == {model_id} and run.goal == expected_goal
+                  and run.status == status and actual == expected and shown == expected
                   and (expected_args is None or run.steps[-1].args == expected_args))
         print(f"{'PASS' if passed else 'FAIL'} {name}: goal={run.goal}, {actual} "
               f"({run.status}, {run.stop_reason}, {run.elapsed_s:.2f}s, {len(run.errors)} rejected replies)",
@@ -86,8 +89,7 @@ def main():
         outcomes.append({"name": name, "recording": agent.recording.key, "question": question,
                          "expected_tools": expected, "expected_args": expected_args, "expected_status": status,
                          "served_models": sorted(str(name) for name in served_models),
-                         "expected_goal": goal or ("compare" if status == "clarify" else
-                                                   "unsupported" if status == "unsupported" else expected[-1]),
+                         "expected_goal": expected_goal,
                          "passed": passed, "run": asdict(run), "displayed": render(run)})
         if args.capture_responses:
             outcomes[-1]["responses"] = responses
@@ -123,12 +125,31 @@ def main():
         ):
             execute(name, Agent(model, load_recording(key)), question, tools, "ok", args_)
     extended = outcomes[len(original):]
+    if args.extended:
+        # Swap the peak heights so the same chronological request must
+        # choose a different observed event ID.
+        for first, second in ((80, 90), (90, 80)):
+            heart = [60] * 120 + [first] * 30 + [60] * 20 + [second] * 30
+            recording = Recording(f"synthetic_{first}_{second}", "Synthetic event choice", "",
+                                  tuple(Second(bpm, 0.03, 1, 32) for bpm in heart), 1, 32)
+            earlier_id, later_id = (2, 1) if first < second else (1, 2)
+            for reference, event_id in (("earlier", earlier_id), ("later", later_id)):
+                execute(f"observed_{reference}_{first}_{second}", Agent(model, recording),
+                        f"Check wrist movement at the {reference} heart-rate event.",
+                        ["heart", "motion"], "ok", {"event": event_id})
+        execute("ambiguous_observed_event", Agent(model, recording),
+                "Check wrist movement at an event.", ["heart"], "clarify", None, goal="motion")
+    event_choices = outcomes[len(original) + len(extended):]
     if extended:
         print(f"{sum(c['passed'] for c in extended)}/{len(extended)} extended cases passed.")
+    if event_choices:
+        print(f"{sum(c['passed'] for c in event_choices)}/{len(event_choices)} synthetic event-choice cases passed.")
     if args.output:
         report = {"model": model_id, "cases": original}
         if extended:
             report["extended_cases"] = extended
+        if event_choices:
+            report["synthetic_event_cases"] = event_choices
         args.output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     return int(not all(c["passed"] for c in outcomes))
 

@@ -1,0 +1,5527 @@
+{
+  "model": "qwen2.5-0.5b-instruct-q4_k_m",
+  "cases": [
+    {
+      "name": "coverage",
+      "recording": "offset",
+      "question": "Check this wearable recording for missing measurements or other data-quality problems.",
+      "expected_tools": [
+        "quality"
+      ],
+      "expected_args": null,
+      "expected_status": "ok",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "expected_goal": "quality",
+      "passed": true,
+      "run": {
+        "status": "ok",
+        "steps": [
+          {
+            "action": "quality",
+            "args": {},
+            "result": {
+              "duration_s": 900,
+              "signals": {
+                "heart_rate": {
+                  "available": true,
+                  "sample_rate_hz": 1,
+                  "expected_e4_rate_hz": 1,
+                  "unexpected_rate": false,
+                  "missing_s": 10,
+                  "partial_bins": 0,
+                  "coverage": 0.9889,
+                  "gap_count": 1,
+                  "largest_gaps_s": [
+                    [
+                      0,
+                      10
+                    ]
+                  ]
+                },
+                "accelerometer": {
+                  "available": true,
+                  "sample_rate_hz": 32,
+                  "expected_e4_rate_hz": 32,
+                  "unexpected_rate": false,
+                  "missing_s": 0,
+                  "partial_bins": 0,
+                  "coverage": 1.0,
+                  "gap_count": 0,
+                  "largest_gaps_s": []
+                }
+              },
+              "issue_count": 0,
+              "examples": []
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "shown": [
+          {
+            "action": "quality",
+            "args": {},
+            "result": {
+              "duration_s": 900,
+              "signals": {
+                "heart_rate": {
+                  "available": true,
+                  "sample_rate_hz": 1,
+                  "expected_e4_rate_hz": 1,
+                  "unexpected_rate": false,
+                  "missing_s": 10,
+                  "partial_bins": 0,
+                  "coverage": 0.9889,
+                  "gap_count": 1,
+                  "largest_gaps_s": [
+                    [
+                      0,
+                      10
+                    ]
+                  ]
+                },
+                "accelerometer": {
+                  "available": true,
+                  "sample_rate_hz": 32,
+                  "expected_e4_rate_hz": 32,
+                  "unexpected_rate": false,
+                  "missing_s": 0,
+                  "partial_bins": 0,
+                  "coverage": 1.0,
+                  "gap_count": 0,
+                  "largest_gaps_s": []
+                }
+              },
+              "issue_count": 0,
+              "examples": []
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "message": "",
+        "errors": [],
+        "model_calls": 1,
+        "elapsed_s": 0.254,
+        "goal": "quality",
+        "stop_reason": "goal_satisfied",
+        "safeguards": []
+      },
+      "displayed": "Signal quality\n  Heart rate: 1 Hz, 98.9% usable coverage, 10 unusable seconds across 1 gaps, 0 partial sample bins.\n    Gap: 00:00 to 00:10.\n  Accelerometer: 32 Hz, 100.0% usable coverage, 0 unusable seconds across 0 gaps, 0 partial sample bins.\n  Tools exclude unusable seconds and withhold statistics with low coverage.",
+      "responses": [
+        {
+          "content": "quality",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 1,
+              "prompt_tokens": 219,
+              "total_tokens": 220,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 20,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 4.778310293913866,
+              "ttft_ms": 180,
+              "decode_token_per_second": 4.778310293913866
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-73bd90d7-1bd2-40d6-b08e-ae095ea5fe84",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "elevations",
+      "recording": "rising",
+      "question": "Find the most significant periods of elevated heart rate and tell me when they occurred.",
+      "expected_tools": [
+        "heart"
+      ],
+      "expected_args": null,
+      "expected_status": "ok",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "expected_goal": "heart",
+      "passed": true,
+      "run": {
+        "status": "ok",
+        "steps": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  960
+                ],
+                "valid_s": 960,
+                "total_s": 960,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 89.71274,
+                "median": 89.345,
+                "sd": 25.25725,
+                "min": 53.6,
+                "max": 128.27
+              },
+              "last_vs_first_minute_bpm": 53.502,
+              "events": [
+                {
+                  "id": 1,
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "peak_bpm": 128.27,
+                  "mean_bpm": 112.962505,
+                  "peak_above_baseline_bpm": 57.94
+                }
+              ],
+              "event_count": 1,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 68.986917,
+                "median": 70.33,
+                "sd": 6.490537,
+                "min": 54.1,
+                "max": 83.0
+              },
+              "threshold_bpm": 80.33,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "shown": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  960
+                ],
+                "valid_s": 960,
+                "total_s": 960,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 89.71274,
+                "median": 89.345,
+                "sd": 25.25725,
+                "min": 53.6,
+                "max": 128.27
+              },
+              "last_vs_first_minute_bpm": 53.502,
+              "events": [
+                {
+                  "id": 1,
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "peak_bpm": 128.27,
+                  "mean_bpm": 112.962505,
+                  "peak_above_baseline_bpm": 57.94
+                }
+              ],
+              "event_count": 1,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 68.986917,
+                "median": 70.33,
+                "sd": 6.490537,
+                "min": 54.1,
+                "max": 83.0
+              },
+              "threshold_bpm": 80.33,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "message": "",
+        "errors": [],
+        "model_calls": 1,
+        "elapsed_s": 0.067,
+        "goal": "heart",
+        "stop_reason": "goal_satisfied",
+        "safeguards": []
+      },
+      "displayed": "Heart rate, 00:00 to 16:00: mean 89.7, median 89.3, SD 25.3 bpm (960/960 valid seconds).\n  Range 53.6 to 128.3 bpm.\n  Last vs. first minute mean: +53.5 bpm.\n  Baseline median 70.3 bpm (120/120 valid seconds). Event rule: at least 20 s at or above 80.3 bpm.\n  Event 1: 07:45 to 16:00, mean 113.0, peak 128.3 bpm (+57.9 bpm vs. baseline).",
+      "responses": [
+        {
+          "content": "heart",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 1,
+              "prompt_tokens": 222,
+              "total_tokens": 223,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 201,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 18.70487449029217,
+              "ttft_ms": 39,
+              "decode_token_per_second": 18.70487449029217
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-fd5756bc-e7b1-4fcf-9212-7e150483285e",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "motion_at_rise",
+      "recording": "rising",
+      "question": "Investigate the largest heart-rate increase. Was it accompanied by increased wrist movement?",
+      "expected_tools": [
+        "heart",
+        "motion"
+      ],
+      "expected_args": {
+        "event": 1
+      },
+      "expected_status": "ok",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "expected_goal": "motion",
+      "passed": true,
+      "run": {
+        "status": "ok",
+        "steps": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  960
+                ],
+                "valid_s": 960,
+                "total_s": 960,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 89.71274,
+                "median": 89.345,
+                "sd": 25.25725,
+                "min": 53.6,
+                "max": 128.27
+              },
+              "last_vs_first_minute_bpm": 53.502,
+              "events": [
+                {
+                  "id": 1,
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "peak_bpm": 128.27,
+                  "mean_bpm": 112.962505,
+                  "peak_above_baseline_bpm": 57.94
+                }
+              ],
+              "event_count": 1,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 68.986917,
+                "median": 70.33,
+                "sd": 6.490537,
+                "min": 54.1,
+                "max": 83.0
+              },
+              "threshold_bpm": 80.33,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "prerequisite"
+          },
+          {
+            "action": "motion",
+            "args": {
+              "event": 1
+            },
+            "result": {
+              "before": {
+                "window_s": [
+                  0,
+                  465
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    0,
+                    465
+                  ],
+                  "valid_s": 465,
+                  "total_s": 465,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 64.962989,
+                  "median": 64.2,
+                  "sd": 6.303003,
+                  "min": 53.6,
+                  "max": 83.0
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    0,
+                    465
+                  ],
+                  "valid_s": 465,
+                  "total_s": 465,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.049704,
+                  "median": 0.045025,
+                  "sd": 0.026757,
+                  "min": 0.022237,
+                  "max": 0.393345
+                }
+              },
+              "during": {
+                "window_s": [
+                  465,
+                  960
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "valid_s": 495,
+                  "total_s": 495,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 112.962505,
+                  "median": 113.25,
+                  "sd": 9.159554,
+                  "min": 80.5,
+                  "max": 128.27
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "valid_s": 495,
+                  "total_s": 495,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.086513,
+                  "median": 0.079038,
+                  "sd": 0.042651,
+                  "min": 0.038509,
+                  "max": 0.642011
+                }
+              },
+              "after": null,
+              "during_minus_before_motion_g": 0.036809,
+              "relative_motion": "higher",
+              "note": "Wrist acceleration measures local motion. Timing alone cannot establish a cause."
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "shown": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  960
+                ],
+                "valid_s": 960,
+                "total_s": 960,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 89.71274,
+                "median": 89.345,
+                "sd": 25.25725,
+                "min": 53.6,
+                "max": 128.27
+              },
+              "last_vs_first_minute_bpm": 53.502,
+              "events": [
+                {
+                  "id": 1,
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "peak_bpm": 128.27,
+                  "mean_bpm": 112.962505,
+                  "peak_above_baseline_bpm": 57.94
+                }
+              ],
+              "event_count": 1,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 68.986917,
+                "median": 70.33,
+                "sd": 6.490537,
+                "min": 54.1,
+                "max": 83.0
+              },
+              "threshold_bpm": 80.33,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "prerequisite"
+          },
+          {
+            "action": "motion",
+            "args": {
+              "event": 1
+            },
+            "result": {
+              "before": {
+                "window_s": [
+                  0,
+                  465
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    0,
+                    465
+                  ],
+                  "valid_s": 465,
+                  "total_s": 465,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 64.962989,
+                  "median": 64.2,
+                  "sd": 6.303003,
+                  "min": 53.6,
+                  "max": 83.0
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    0,
+                    465
+                  ],
+                  "valid_s": 465,
+                  "total_s": 465,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.049704,
+                  "median": 0.045025,
+                  "sd": 0.026757,
+                  "min": 0.022237,
+                  "max": 0.393345
+                }
+              },
+              "during": {
+                "window_s": [
+                  465,
+                  960
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "valid_s": 495,
+                  "total_s": 495,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 112.962505,
+                  "median": 113.25,
+                  "sd": 9.159554,
+                  "min": 80.5,
+                  "max": 128.27
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "valid_s": 495,
+                  "total_s": 495,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.086513,
+                  "median": 0.079038,
+                  "sd": 0.042651,
+                  "min": 0.038509,
+                  "max": 0.642011
+                }
+              },
+              "after": null,
+              "during_minus_before_motion_g": 0.036809,
+              "relative_motion": "higher",
+              "note": "Wrist acceleration measures local motion. Timing alone cannot establish a cause."
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "message": "",
+        "errors": [],
+        "model_calls": 1,
+        "elapsed_s": 0.062,
+        "goal": "motion",
+        "stop_reason": "goal_satisfied",
+        "safeguards": []
+      },
+      "displayed": "Heart rate, 00:00 to 16:00: mean 89.7, median 89.3, SD 25.3 bpm (960/960 valid seconds).\n  Range 53.6 to 128.3 bpm.\n  Last vs. first minute mean: +53.5 bpm.\n  Baseline median 70.3 bpm (120/120 valid seconds). Event rule: at least 20 s at or above 80.3 bpm.\n  Event 1: 07:45 to 16:00, mean 113.0, peak 128.3 bpm (+57.9 bpm vs. baseline).\nWrist movement around the selected interval\n  Before (00:00 to 07:45)\n    Heart rate: mean 65.0, median 64.2, SD 6.3 bpm (465/465 valid seconds)\n    Wrist movement: mean 0.0497, median 0.0450, SD 0.0268 g RMS (465/465 valid seconds)\n  During (07:45 to 16:00)\n    Heart rate: mean 113.0, median 113.2, SD 9.2 bpm (495/495 valid seconds)\n    Wrist movement: mean 0.0865, median 0.0790, SD 0.0427 g RMS (495/495 valid seconds)\n  After: outside excerpt.\n  Movement during the window was higher than before (+0.0368 g RMS).\n  Wrist acceleration measures local motion. Timing alone cannot establish a cause.",
+      "responses": [
+        {
+          "content": "motion",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 1,
+              "prompt_tokens": 222,
+              "total_tokens": 223,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 201,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 20.352919626320393,
+              "ttft_ms": 37,
+              "decode_token_per_second": 20.352919626320393
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-e8bc9811-a7ff-4a12-8728-4421d739ffe8",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "no_rise_to_check",
+      "recording": "steady",
+      "question": "Investigate the largest heart-rate increase. Was it accompanied by increased wrist movement?",
+      "expected_tools": [
+        "heart"
+      ],
+      "expected_args": null,
+      "expected_status": "ok",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "expected_goal": "motion",
+      "passed": true,
+      "run": {
+        "status": "ok",
+        "steps": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  360
+                ],
+                "valid_s": 360,
+                "total_s": 360,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 99.393944,
+                "median": 98.98,
+                "sd": 2.110535,
+                "min": 96.58,
+                "max": 103.55
+              },
+              "last_vs_first_minute_bpm": 4.342,
+              "events": [],
+              "event_count": 0,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 98.2,
+                "median": 98.14,
+                "sd": 0.954478,
+                "min": 96.77,
+                "max": 100.13
+              },
+              "threshold_bpm": 108.14,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "prerequisite"
+          }
+        ],
+        "shown": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  360
+                ],
+                "valid_s": 360,
+                "total_s": 360,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 99.393944,
+                "median": 98.98,
+                "sd": 2.110535,
+                "min": 96.58,
+                "max": 103.55
+              },
+              "last_vs_first_minute_bpm": 4.342,
+              "events": [],
+              "event_count": 0,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 98.2,
+                "median": 98.14,
+                "sd": 0.954478,
+                "min": 96.77,
+                "max": 100.13
+              },
+              "threshold_bpm": 108.14,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "prerequisite"
+          }
+        ],
+        "message": "",
+        "errors": [],
+        "model_calls": 1,
+        "elapsed_s": 0.028,
+        "goal": "motion",
+        "stop_reason": "no_event_evidence",
+        "safeguards": [
+          "event_followup_unavailable"
+        ]
+      },
+      "displayed": "Heart rate, 00:00 to 06:00: mean 99.4, median 99.0, SD 2.1 bpm (360/360 valid seconds).\n  Range 96.6 to 103.5 bpm.\n  Last vs. first minute mean: +4.3 bpm.\n  Baseline median 98.1 bpm (120/120 valid seconds). Event rule: at least 20 s at or above 108.1 bpm.\n  No sustained elevation met this recording-relative rule.",
+      "responses": [
+        {
+          "content": "motion",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 1,
+              "prompt_tokens": 222,
+              "total_tokens": 223,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 221,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 53.604931653712136,
+              "ttft_ms": 7,
+              "decode_token_per_second": 53.604931653712136
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-f4aab3ec-0c9d-4062-8cb7-19f4ee7237bd",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "event_vs_baseline",
+      "recording": "rising",
+      "question": "Compare the largest heart-rate elevation with the first two minutes. How did heart rate and movement differ?",
+      "expected_tools": [
+        "heart",
+        "compare"
+      ],
+      "expected_args": {
+        "event": 1
+      },
+      "expected_status": "ok",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "expected_goal": "compare",
+      "passed": true,
+      "run": {
+        "status": "ok",
+        "steps": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  960
+                ],
+                "valid_s": 960,
+                "total_s": 960,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 89.71274,
+                "median": 89.345,
+                "sd": 25.25725,
+                "min": 53.6,
+                "max": 128.27
+              },
+              "last_vs_first_minute_bpm": 53.502,
+              "events": [
+                {
+                  "id": 1,
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "peak_bpm": 128.27,
+                  "mean_bpm": 112.962505,
+                  "peak_above_baseline_bpm": 57.94
+                }
+              ],
+              "event_count": 1,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 68.986917,
+                "median": 70.33,
+                "sd": 6.490537,
+                "min": 54.1,
+                "max": 83.0
+              },
+              "threshold_bpm": 80.33,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "prerequisite"
+          },
+          {
+            "action": "compare",
+            "args": {
+              "event": 1
+            },
+            "result": {
+              "a": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    0,
+                    120
+                  ],
+                  "valid_s": 120,
+                  "total_s": 120,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 68.986917,
+                  "median": 70.33,
+                  "sd": 6.490537,
+                  "min": 54.1,
+                  "max": 83.0
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    0,
+                    120
+                  ],
+                  "valid_s": 120,
+                  "total_s": 120,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.043103,
+                  "median": 0.039171,
+                  "sd": 0.022886,
+                  "min": 0.022237,
+                  "max": 0.245026
+                }
+              },
+              "b": {
+                "window_s": [
+                  465,
+                  960
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "valid_s": 495,
+                  "total_s": 495,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 112.962505,
+                  "median": 113.25,
+                  "sd": 9.159554,
+                  "min": 80.5,
+                  "max": 128.27
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "valid_s": 495,
+                  "total_s": 495,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.086513,
+                  "median": 0.079038,
+                  "sd": 0.042651,
+                  "min": 0.038509,
+                  "max": 0.642011
+                }
+              },
+              "b_minus_a_bpm": 43.975588,
+              "b_minus_a_motion_g": 0.04341
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "shown": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  960
+                ],
+                "valid_s": 960,
+                "total_s": 960,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 89.71274,
+                "median": 89.345,
+                "sd": 25.25725,
+                "min": 53.6,
+                "max": 128.27
+              },
+              "last_vs_first_minute_bpm": 53.502,
+              "events": [
+                {
+                  "id": 1,
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "peak_bpm": 128.27,
+                  "mean_bpm": 112.962505,
+                  "peak_above_baseline_bpm": 57.94
+                }
+              ],
+              "event_count": 1,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 68.986917,
+                "median": 70.33,
+                "sd": 6.490537,
+                "min": 54.1,
+                "max": 83.0
+              },
+              "threshold_bpm": 80.33,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "prerequisite"
+          },
+          {
+            "action": "compare",
+            "args": {
+              "event": 1
+            },
+            "result": {
+              "a": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    0,
+                    120
+                  ],
+                  "valid_s": 120,
+                  "total_s": 120,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 68.986917,
+                  "median": 70.33,
+                  "sd": 6.490537,
+                  "min": 54.1,
+                  "max": 83.0
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    0,
+                    120
+                  ],
+                  "valid_s": 120,
+                  "total_s": 120,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.043103,
+                  "median": 0.039171,
+                  "sd": 0.022886,
+                  "min": 0.022237,
+                  "max": 0.245026
+                }
+              },
+              "b": {
+                "window_s": [
+                  465,
+                  960
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "valid_s": 495,
+                  "total_s": 495,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 112.962505,
+                  "median": 113.25,
+                  "sd": 9.159554,
+                  "min": 80.5,
+                  "max": 128.27
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "valid_s": 495,
+                  "total_s": 495,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.086513,
+                  "median": 0.079038,
+                  "sd": 0.042651,
+                  "min": 0.038509,
+                  "max": 0.642011
+                }
+              },
+              "b_minus_a_bpm": 43.975588,
+              "b_minus_a_motion_g": 0.04341
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "message": "",
+        "errors": [],
+        "model_calls": 1,
+        "elapsed_s": 0.057,
+        "goal": "compare",
+        "stop_reason": "goal_satisfied",
+        "safeguards": []
+      },
+      "displayed": "Heart rate, 00:00 to 16:00: mean 89.7, median 89.3, SD 25.3 bpm (960/960 valid seconds).\n  Range 53.6 to 128.3 bpm.\n  Last vs. first minute mean: +53.5 bpm.\n  Baseline median 70.3 bpm (120/120 valid seconds). Event rule: at least 20 s at or above 80.3 bpm.\n  Event 1: 07:45 to 16:00, mean 113.0, peak 128.3 bpm (+57.9 bpm vs. baseline).\nInterval comparison (B minus A)\n  A (00:00 to 02:00)\n    Heart rate: mean 69.0, median 70.3, SD 6.5 bpm (120/120 valid seconds)\n    Wrist movement: mean 0.0431, median 0.0392, SD 0.0229 g RMS (120/120 valid seconds)\n  B (07:45 to 16:00)\n    Heart rate: mean 113.0, median 113.2, SD 9.2 bpm (495/495 valid seconds)\n    Wrist movement: mean 0.0865, median 0.0790, SD 0.0427 g RMS (495/495 valid seconds)\n  Mean heart rate: +44.0 bpm.\n  Mean wrist movement: +0.0434 g RMS.",
+      "responses": [
+        {
+          "content": "compare",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 1,
+              "prompt_tokens": 226,
+              "total_tokens": 227,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 201,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 22.02061129216947,
+              "ttft_ms": 34,
+              "decode_token_per_second": 22.02061129216947
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-7ecdb575-1860-4b8e-8e8a-a560028525fa",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "explicit_windows",
+      "recording": "offset",
+      "question": "Contrast minute 0 to 1 with minute 1 to 2 for pulse and motion.",
+      "expected_tools": [
+        "compare"
+      ],
+      "expected_args": {
+        "a": [
+          0,
+          60
+        ],
+        "b": [
+          60,
+          120
+        ]
+      },
+      "expected_status": "ok",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "expected_goal": "compare",
+      "passed": true,
+      "run": {
+        "status": "ok",
+        "steps": [
+          {
+            "action": "compare",
+            "args": {
+              "a": [
+                0,
+                60
+              ],
+              "b": [
+                60,
+                120
+              ]
+            },
+            "result": {
+              "a": {
+                "window_s": [
+                  0,
+                  60
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    0,
+                    60
+                  ],
+                  "valid_s": 50,
+                  "total_s": 60,
+                  "coverage": 0.8333,
+                  "status": "ok",
+                  "mean": 59.023,
+                  "median": 58.17,
+                  "sd": 2.941897,
+                  "min": 57.0,
+                  "max": 72.0
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    0,
+                    60
+                  ],
+                  "valid_s": 60,
+                  "total_s": 60,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.044415,
+                  "median": 0.041364,
+                  "sd": 0.010497,
+                  "min": 0.027999,
+                  "max": 0.084016
+                }
+              },
+              "b": {
+                "window_s": [
+                  60,
+                  120
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    60,
+                    120
+                  ],
+                  "valid_s": 60,
+                  "total_s": 60,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 67.599167,
+                  "median": 67.66,
+                  "sd": 4.877611,
+                  "min": 58.78,
+                  "max": 74.97
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    60,
+                    120
+                  ],
+                  "valid_s": 60,
+                  "total_s": 60,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.07527,
+                  "median": 0.06807,
+                  "sd": 0.036238,
+                  "min": 0.031013,
+                  "max": 0.190545
+                }
+              },
+              "b_minus_a_bpm": 8.576167,
+              "b_minus_a_motion_g": 0.030855
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "shown": [
+          {
+            "action": "compare",
+            "args": {
+              "a": [
+                0,
+                60
+              ],
+              "b": [
+                60,
+                120
+              ]
+            },
+            "result": {
+              "a": {
+                "window_s": [
+                  0,
+                  60
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    0,
+                    60
+                  ],
+                  "valid_s": 50,
+                  "total_s": 60,
+                  "coverage": 0.8333,
+                  "status": "ok",
+                  "mean": 59.023,
+                  "median": 58.17,
+                  "sd": 2.941897,
+                  "min": 57.0,
+                  "max": 72.0
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    0,
+                    60
+                  ],
+                  "valid_s": 60,
+                  "total_s": 60,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.044415,
+                  "median": 0.041364,
+                  "sd": 0.010497,
+                  "min": 0.027999,
+                  "max": 0.084016
+                }
+              },
+              "b": {
+                "window_s": [
+                  60,
+                  120
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    60,
+                    120
+                  ],
+                  "valid_s": 60,
+                  "total_s": 60,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 67.599167,
+                  "median": 67.66,
+                  "sd": 4.877611,
+                  "min": 58.78,
+                  "max": 74.97
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    60,
+                    120
+                  ],
+                  "valid_s": 60,
+                  "total_s": 60,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.07527,
+                  "median": 0.06807,
+                  "sd": 0.036238,
+                  "min": 0.031013,
+                  "max": 0.190545
+                }
+              },
+              "b_minus_a_bpm": 8.576167,
+              "b_minus_a_motion_g": 0.030855
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "message": "",
+        "errors": [],
+        "model_calls": 1,
+        "elapsed_s": 0.054,
+        "goal": "compare",
+        "stop_reason": "goal_satisfied",
+        "safeguards": []
+      },
+      "displayed": "Interval comparison (B minus A)\n  A (00:00 to 01:00)\n    Heart rate: mean 59.0, median 58.2, SD 2.9 bpm (50/60 valid seconds)\n    Wrist movement: mean 0.0444, median 0.0414, SD 0.0105 g RMS (60/60 valid seconds)\n  B (01:00 to 02:00)\n    Heart rate: mean 67.6, median 67.7, SD 4.9 bpm (60/60 valid seconds)\n    Wrist movement: mean 0.0753, median 0.0681, SD 0.0362 g RMS (60/60 valid seconds)\n  Mean heart rate: +8.6 bpm.\n  Mean wrist movement: +0.0309 g RMS.",
+      "responses": [
+        {
+          "content": "compare",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 1,
+              "prompt_tokens": 226,
+              "total_tokens": 227,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 201,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 21.974158389733674,
+              "ttft_ms": 34,
+              "decode_token_per_second": 21.974158389733674
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-c52372bc-192c-4724-a78a-d69b2607697a",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "quality_paraphrase",
+      "recording": "offset",
+      "question": "Do both streams cover the full recording?",
+      "expected_tools": [
+        "quality"
+      ],
+      "expected_args": null,
+      "expected_status": "ok",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "expected_goal": "quality",
+      "passed": true,
+      "run": {
+        "status": "ok",
+        "steps": [
+          {
+            "action": "quality",
+            "args": {},
+            "result": {
+              "duration_s": 900,
+              "signals": {
+                "heart_rate": {
+                  "available": true,
+                  "sample_rate_hz": 1,
+                  "expected_e4_rate_hz": 1,
+                  "unexpected_rate": false,
+                  "missing_s": 10,
+                  "partial_bins": 0,
+                  "coverage": 0.9889,
+                  "gap_count": 1,
+                  "largest_gaps_s": [
+                    [
+                      0,
+                      10
+                    ]
+                  ]
+                },
+                "accelerometer": {
+                  "available": true,
+                  "sample_rate_hz": 32,
+                  "expected_e4_rate_hz": 32,
+                  "unexpected_rate": false,
+                  "missing_s": 0,
+                  "partial_bins": 0,
+                  "coverage": 1.0,
+                  "gap_count": 0,
+                  "largest_gaps_s": []
+                }
+              },
+              "issue_count": 0,
+              "examples": []
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "shown": [
+          {
+            "action": "quality",
+            "args": {},
+            "result": {
+              "duration_s": 900,
+              "signals": {
+                "heart_rate": {
+                  "available": true,
+                  "sample_rate_hz": 1,
+                  "expected_e4_rate_hz": 1,
+                  "unexpected_rate": false,
+                  "missing_s": 10,
+                  "partial_bins": 0,
+                  "coverage": 0.9889,
+                  "gap_count": 1,
+                  "largest_gaps_s": [
+                    [
+                      0,
+                      10
+                    ]
+                  ]
+                },
+                "accelerometer": {
+                  "available": true,
+                  "sample_rate_hz": 32,
+                  "expected_e4_rate_hz": 32,
+                  "unexpected_rate": false,
+                  "missing_s": 0,
+                  "partial_bins": 0,
+                  "coverage": 1.0,
+                  "gap_count": 0,
+                  "largest_gaps_s": []
+                }
+              },
+              "issue_count": 0,
+              "examples": []
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "message": "",
+        "errors": [],
+        "model_calls": 1,
+        "elapsed_s": 0.057,
+        "goal": "quality",
+        "stop_reason": "goal_satisfied",
+        "safeguards": []
+      },
+      "displayed": "Signal quality\n  Heart rate: 1 Hz, 98.9% usable coverage, 10 unusable seconds across 1 gaps, 0 partial sample bins.\n    Gap: 00:00 to 00:10.\n  Accelerometer: 32 Hz, 100.0% usable coverage, 0 unusable seconds across 0 gaps, 0 partial sample bins.\n  Tools exclude unusable seconds and withhold statistics with low coverage.",
+      "responses": [
+        {
+          "content": "quality",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 1,
+              "prompt_tokens": 214,
+              "total_tokens": 215,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 201,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 21.153724113130114,
+              "ttft_ms": 36,
+              "decode_token_per_second": 21.153724113130114
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-93783843-3d44-48a0-9ec0-f8918fe198b3",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "unsupported",
+      "recording": "rising",
+      "question": "Can you diagnose a heart condition from this?",
+      "expected_tools": [],
+      "expected_args": null,
+      "expected_status": "unsupported",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "expected_goal": "unsupported",
+      "passed": true,
+      "run": {
+        "status": "unsupported",
+        "steps": [],
+        "shown": [],
+        "message": "I can investigate recorded heart rate, wrist motion and signal quality.",
+        "errors": [],
+        "model_calls": 1,
+        "elapsed_s": 0.073,
+        "goal": "unsupported",
+        "stop_reason": "model_declined",
+        "safeguards": []
+      },
+      "displayed": "I can investigate recorded heart rate, wrist motion and signal quality.",
+      "responses": [
+        {
+          "content": "diagnose",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 3,
+              "prompt_tokens": 215,
+              "total_tokens": 218,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 201,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 46.58529768005218,
+              "ttft_ms": 35,
+              "decode_token_per_second": 68.03183890060549
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-e0890be6-56b0-4636-9bf0-e227de24c9dd",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "ambiguous",
+      "recording": "rising",
+      "question": "Compare two time windows for me.",
+      "expected_tools": [],
+      "expected_args": null,
+      "expected_status": "clarify",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "expected_goal": "compare",
+      "passed": true,
+      "run": {
+        "status": "clarify",
+        "steps": [],
+        "shown": [],
+        "message": "Specify the elapsed time window(s) or a heart-rate event and reference period.",
+        "errors": [],
+        "model_calls": 1,
+        "elapsed_s": 0.056,
+        "goal": "compare",
+        "stop_reason": "missing_reference",
+        "safeguards": [
+          "missing_reference"
+        ]
+      },
+      "displayed": "Specify the elapsed time window(s) or a heart-rate event and reference period.",
+      "responses": [
+        {
+          "content": "compare",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 1,
+              "prompt_tokens": 213,
+              "total_tokens": 214,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 201,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 20.82856012163879,
+              "ttft_ms": 35,
+              "decode_token_per_second": 20.82856012163879
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-e88a6cf2-3718-4d99-8855-5245eda28a28",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "followup_setup",
+      "recording": "rising",
+      "question": "Find sustained heart-rate elevations.",
+      "expected_tools": [
+        "heart"
+      ],
+      "expected_args": null,
+      "expected_status": "ok",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "expected_goal": "heart",
+      "passed": true,
+      "run": {
+        "status": "ok",
+        "steps": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  960
+                ],
+                "valid_s": 960,
+                "total_s": 960,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 89.71274,
+                "median": 89.345,
+                "sd": 25.25725,
+                "min": 53.6,
+                "max": 128.27
+              },
+              "last_vs_first_minute_bpm": 53.502,
+              "events": [
+                {
+                  "id": 1,
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "peak_bpm": 128.27,
+                  "mean_bpm": 112.962505,
+                  "peak_above_baseline_bpm": 57.94
+                }
+              ],
+              "event_count": 1,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 68.986917,
+                "median": 70.33,
+                "sd": 6.490537,
+                "min": 54.1,
+                "max": 83.0
+              },
+              "threshold_bpm": 80.33,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "shown": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  960
+                ],
+                "valid_s": 960,
+                "total_s": 960,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 89.71274,
+                "median": 89.345,
+                "sd": 25.25725,
+                "min": 53.6,
+                "max": 128.27
+              },
+              "last_vs_first_minute_bpm": 53.502,
+              "events": [
+                {
+                  "id": 1,
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "peak_bpm": 128.27,
+                  "mean_bpm": 112.962505,
+                  "peak_above_baseline_bpm": 57.94
+                }
+              ],
+              "event_count": 1,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 68.986917,
+                "median": 70.33,
+                "sd": 6.490537,
+                "min": 54.1,
+                "max": 83.0
+              },
+              "threshold_bpm": 80.33,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "message": "",
+        "errors": [],
+        "model_calls": 1,
+        "elapsed_s": 0.068,
+        "goal": "heart",
+        "stop_reason": "goal_satisfied",
+        "safeguards": []
+      },
+      "displayed": "Heart rate, 00:00 to 16:00: mean 89.7, median 89.3, SD 25.3 bpm (960/960 valid seconds).\n  Range 53.6 to 128.3 bpm.\n  Last vs. first minute mean: +53.5 bpm.\n  Baseline median 70.3 bpm (120/120 valid seconds). Event rule: at least 20 s at or above 80.3 bpm.\n  Event 1: 07:45 to 16:00, mean 113.0, peak 128.3 bpm (+57.9 bpm vs. baseline).",
+      "responses": [
+        {
+          "content": "heart",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 1,
+              "prompt_tokens": 213,
+              "total_tokens": 214,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 201,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 19.9788224482049,
+              "ttft_ms": 37,
+              "decode_token_per_second": 19.9788224482049
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-576d840f-4b71-48fb-b62f-a82451dc37a1",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "followup",
+      "recording": "rising",
+      "question": "How much wrist movement was recorded around that first event?",
+      "expected_tools": [
+        "motion"
+      ],
+      "expected_args": {
+        "event": 1
+      },
+      "expected_status": "ok",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "expected_goal": "motion",
+      "passed": true,
+      "run": {
+        "status": "ok",
+        "steps": [
+          {
+            "action": "motion",
+            "args": {
+              "event": 1
+            },
+            "result": {
+              "before": {
+                "window_s": [
+                  0,
+                  465
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    0,
+                    465
+                  ],
+                  "valid_s": 465,
+                  "total_s": 465,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 64.962989,
+                  "median": 64.2,
+                  "sd": 6.303003,
+                  "min": 53.6,
+                  "max": 83.0
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    0,
+                    465
+                  ],
+                  "valid_s": 465,
+                  "total_s": 465,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.049704,
+                  "median": 0.045025,
+                  "sd": 0.026757,
+                  "min": 0.022237,
+                  "max": 0.393345
+                }
+              },
+              "during": {
+                "window_s": [
+                  465,
+                  960
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "valid_s": 495,
+                  "total_s": 495,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 112.962505,
+                  "median": 113.25,
+                  "sd": 9.159554,
+                  "min": 80.5,
+                  "max": 128.27
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "valid_s": 495,
+                  "total_s": 495,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.086513,
+                  "median": 0.079038,
+                  "sd": 0.042651,
+                  "min": 0.038509,
+                  "max": 0.642011
+                }
+              },
+              "after": null,
+              "during_minus_before_motion_g": 0.036809,
+              "relative_motion": "higher",
+              "note": "Wrist acceleration measures local motion. Timing alone cannot establish a cause."
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "shown": [
+          {
+            "action": "motion",
+            "args": {
+              "event": 1
+            },
+            "result": {
+              "before": {
+                "window_s": [
+                  0,
+                  465
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    0,
+                    465
+                  ],
+                  "valid_s": 465,
+                  "total_s": 465,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 64.962989,
+                  "median": 64.2,
+                  "sd": 6.303003,
+                  "min": 53.6,
+                  "max": 83.0
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    0,
+                    465
+                  ],
+                  "valid_s": 465,
+                  "total_s": 465,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.049704,
+                  "median": 0.045025,
+                  "sd": 0.026757,
+                  "min": 0.022237,
+                  "max": 0.393345
+                }
+              },
+              "during": {
+                "window_s": [
+                  465,
+                  960
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "valid_s": 495,
+                  "total_s": 495,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 112.962505,
+                  "median": 113.25,
+                  "sd": 9.159554,
+                  "min": 80.5,
+                  "max": 128.27
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "valid_s": 495,
+                  "total_s": 495,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.086513,
+                  "median": 0.079038,
+                  "sd": 0.042651,
+                  "min": 0.038509,
+                  "max": 0.642011
+                }
+              },
+              "after": null,
+              "during_minus_before_motion_g": 0.036809,
+              "relative_motion": "higher",
+              "note": "Wrist acceleration measures local motion. Timing alone cannot establish a cause."
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "message": "",
+        "errors": [],
+        "model_calls": 1,
+        "elapsed_s": 0.067,
+        "goal": "motion",
+        "stop_reason": "goal_satisfied",
+        "safeguards": []
+      },
+      "displayed": "Wrist movement around the selected interval\n  Before (00:00 to 07:45)\n    Heart rate: mean 65.0, median 64.2, SD 6.3 bpm (465/465 valid seconds)\n    Wrist movement: mean 0.0497, median 0.0450, SD 0.0268 g RMS (465/465 valid seconds)\n  During (07:45 to 16:00)\n    Heart rate: mean 113.0, median 113.2, SD 9.2 bpm (495/495 valid seconds)\n    Wrist movement: mean 0.0865, median 0.0790, SD 0.0427 g RMS (495/495 valid seconds)\n  After: outside excerpt.\n  Movement during the window was higher than before (+0.0368 g RMS).\n  Wrist acceleration measures local motion. Timing alone cannot establish a cause.",
+      "responses": [
+        {
+          "content": "motion",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 1,
+              "prompt_tokens": 217,
+              "total_tokens": 218,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 201,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 20.36369560347812,
+              "ttft_ms": 36,
+              "decode_token_per_second": 20.36369560347812
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-8742a843-29c2-43bd-82ad-d7dcbd703ed1",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    }
+  ],
+  "extended_cases": [
+    {
+      "name": "rising_pair_2",
+      "recording": "rising",
+      "question": "Investigate the largest heart-rate increase. Was it accompanied by increased wrist movement?",
+      "expected_tools": [
+        "heart",
+        "motion"
+      ],
+      "expected_args": {
+        "event": 1
+      },
+      "expected_status": "ok",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "expected_goal": "motion",
+      "passed": true,
+      "run": {
+        "status": "ok",
+        "steps": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  960
+                ],
+                "valid_s": 960,
+                "total_s": 960,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 89.71274,
+                "median": 89.345,
+                "sd": 25.25725,
+                "min": 53.6,
+                "max": 128.27
+              },
+              "last_vs_first_minute_bpm": 53.502,
+              "events": [
+                {
+                  "id": 1,
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "peak_bpm": 128.27,
+                  "mean_bpm": 112.962505,
+                  "peak_above_baseline_bpm": 57.94
+                }
+              ],
+              "event_count": 1,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 68.986917,
+                "median": 70.33,
+                "sd": 6.490537,
+                "min": 54.1,
+                "max": 83.0
+              },
+              "threshold_bpm": 80.33,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "prerequisite"
+          },
+          {
+            "action": "motion",
+            "args": {
+              "event": 1
+            },
+            "result": {
+              "before": {
+                "window_s": [
+                  0,
+                  465
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    0,
+                    465
+                  ],
+                  "valid_s": 465,
+                  "total_s": 465,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 64.962989,
+                  "median": 64.2,
+                  "sd": 6.303003,
+                  "min": 53.6,
+                  "max": 83.0
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    0,
+                    465
+                  ],
+                  "valid_s": 465,
+                  "total_s": 465,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.049704,
+                  "median": 0.045025,
+                  "sd": 0.026757,
+                  "min": 0.022237,
+                  "max": 0.393345
+                }
+              },
+              "during": {
+                "window_s": [
+                  465,
+                  960
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "valid_s": 495,
+                  "total_s": 495,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 112.962505,
+                  "median": 113.25,
+                  "sd": 9.159554,
+                  "min": 80.5,
+                  "max": 128.27
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "valid_s": 495,
+                  "total_s": 495,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.086513,
+                  "median": 0.079038,
+                  "sd": 0.042651,
+                  "min": 0.038509,
+                  "max": 0.642011
+                }
+              },
+              "after": null,
+              "during_minus_before_motion_g": 0.036809,
+              "relative_motion": "higher",
+              "note": "Wrist acceleration measures local motion. Timing alone cannot establish a cause."
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "shown": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  960
+                ],
+                "valid_s": 960,
+                "total_s": 960,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 89.71274,
+                "median": 89.345,
+                "sd": 25.25725,
+                "min": 53.6,
+                "max": 128.27
+              },
+              "last_vs_first_minute_bpm": 53.502,
+              "events": [
+                {
+                  "id": 1,
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "peak_bpm": 128.27,
+                  "mean_bpm": 112.962505,
+                  "peak_above_baseline_bpm": 57.94
+                }
+              ],
+              "event_count": 1,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 68.986917,
+                "median": 70.33,
+                "sd": 6.490537,
+                "min": 54.1,
+                "max": 83.0
+              },
+              "threshold_bpm": 80.33,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "prerequisite"
+          },
+          {
+            "action": "motion",
+            "args": {
+              "event": 1
+            },
+            "result": {
+              "before": {
+                "window_s": [
+                  0,
+                  465
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    0,
+                    465
+                  ],
+                  "valid_s": 465,
+                  "total_s": 465,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 64.962989,
+                  "median": 64.2,
+                  "sd": 6.303003,
+                  "min": 53.6,
+                  "max": 83.0
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    0,
+                    465
+                  ],
+                  "valid_s": 465,
+                  "total_s": 465,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.049704,
+                  "median": 0.045025,
+                  "sd": 0.026757,
+                  "min": 0.022237,
+                  "max": 0.393345
+                }
+              },
+              "during": {
+                "window_s": [
+                  465,
+                  960
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "valid_s": 495,
+                  "total_s": 495,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 112.962505,
+                  "median": 113.25,
+                  "sd": 9.159554,
+                  "min": 80.5,
+                  "max": 128.27
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "valid_s": 495,
+                  "total_s": 495,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.086513,
+                  "median": 0.079038,
+                  "sd": 0.042651,
+                  "min": 0.038509,
+                  "max": 0.642011
+                }
+              },
+              "after": null,
+              "during_minus_before_motion_g": 0.036809,
+              "relative_motion": "higher",
+              "note": "Wrist acceleration measures local motion. Timing alone cannot establish a cause."
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "message": "",
+        "errors": [],
+        "model_calls": 1,
+        "elapsed_s": 0.062,
+        "goal": "motion",
+        "stop_reason": "goal_satisfied",
+        "safeguards": []
+      },
+      "displayed": "Heart rate, 00:00 to 16:00: mean 89.7, median 89.3, SD 25.3 bpm (960/960 valid seconds).\n  Range 53.6 to 128.3 bpm.\n  Last vs. first minute mean: +53.5 bpm.\n  Baseline median 70.3 bpm (120/120 valid seconds). Event rule: at least 20 s at or above 80.3 bpm.\n  Event 1: 07:45 to 16:00, mean 113.0, peak 128.3 bpm (+57.9 bpm vs. baseline).\nWrist movement around the selected interval\n  Before (00:00 to 07:45)\n    Heart rate: mean 65.0, median 64.2, SD 6.3 bpm (465/465 valid seconds)\n    Wrist movement: mean 0.0497, median 0.0450, SD 0.0268 g RMS (465/465 valid seconds)\n  During (07:45 to 16:00)\n    Heart rate: mean 113.0, median 113.2, SD 9.2 bpm (495/495 valid seconds)\n    Wrist movement: mean 0.0865, median 0.0790, SD 0.0427 g RMS (495/495 valid seconds)\n  After: outside excerpt.\n  Movement during the window was higher than before (+0.0368 g RMS).\n  Wrist acceleration measures local motion. Timing alone cannot establish a cause.",
+      "responses": [
+        {
+          "content": "motion",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 1,
+              "prompt_tokens": 222,
+              "total_tokens": 223,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 201,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 20.26670990231446,
+              "ttft_ms": 37,
+              "decode_token_per_second": 20.26670990231446
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-5f35962e-b7bb-4ce6-83d9-c35257992a09",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "steady_pair_2",
+      "recording": "steady",
+      "question": "Investigate the largest heart-rate increase. Was it accompanied by increased wrist movement?",
+      "expected_tools": [
+        "heart"
+      ],
+      "expected_args": null,
+      "expected_status": "ok",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "expected_goal": "motion",
+      "passed": true,
+      "run": {
+        "status": "ok",
+        "steps": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  360
+                ],
+                "valid_s": 360,
+                "total_s": 360,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 99.393944,
+                "median": 98.98,
+                "sd": 2.110535,
+                "min": 96.58,
+                "max": 103.55
+              },
+              "last_vs_first_minute_bpm": 4.342,
+              "events": [],
+              "event_count": 0,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 98.2,
+                "median": 98.14,
+                "sd": 0.954478,
+                "min": 96.77,
+                "max": 100.13
+              },
+              "threshold_bpm": 108.14,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "prerequisite"
+          }
+        ],
+        "shown": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  360
+                ],
+                "valid_s": 360,
+                "total_s": 360,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 99.393944,
+                "median": 98.98,
+                "sd": 2.110535,
+                "min": 96.58,
+                "max": 103.55
+              },
+              "last_vs_first_minute_bpm": 4.342,
+              "events": [],
+              "event_count": 0,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 98.2,
+                "median": 98.14,
+                "sd": 0.954478,
+                "min": 96.77,
+                "max": 100.13
+              },
+              "threshold_bpm": 108.14,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "prerequisite"
+          }
+        ],
+        "message": "",
+        "errors": [],
+        "model_calls": 1,
+        "elapsed_s": 0.027,
+        "goal": "motion",
+        "stop_reason": "no_event_evidence",
+        "safeguards": [
+          "event_followup_unavailable"
+        ]
+      },
+      "displayed": "Heart rate, 00:00 to 06:00: mean 99.4, median 99.0, SD 2.1 bpm (360/360 valid seconds).\n  Range 96.6 to 103.5 bpm.\n  Last vs. first minute mean: +4.3 bpm.\n  Baseline median 98.1 bpm (120/120 valid seconds). Event rule: at least 20 s at or above 108.1 bpm.\n  No sustained elevation met this recording-relative rule.",
+      "responses": [
+        {
+          "content": "motion",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 1,
+              "prompt_tokens": 222,
+              "total_tokens": 223,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 221,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 52.562417871222074,
+              "ttft_ms": 8,
+              "decode_token_per_second": 52.562417871222074
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-ca4a1035-a2ba-48db-a885-bde045fa33ca",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "rising_pair_3",
+      "recording": "rising",
+      "question": "Investigate the largest heart-rate increase. Was it accompanied by increased wrist movement?",
+      "expected_tools": [
+        "heart",
+        "motion"
+      ],
+      "expected_args": {
+        "event": 1
+      },
+      "expected_status": "ok",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "expected_goal": "motion",
+      "passed": true,
+      "run": {
+        "status": "ok",
+        "steps": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  960
+                ],
+                "valid_s": 960,
+                "total_s": 960,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 89.71274,
+                "median": 89.345,
+                "sd": 25.25725,
+                "min": 53.6,
+                "max": 128.27
+              },
+              "last_vs_first_minute_bpm": 53.502,
+              "events": [
+                {
+                  "id": 1,
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "peak_bpm": 128.27,
+                  "mean_bpm": 112.962505,
+                  "peak_above_baseline_bpm": 57.94
+                }
+              ],
+              "event_count": 1,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 68.986917,
+                "median": 70.33,
+                "sd": 6.490537,
+                "min": 54.1,
+                "max": 83.0
+              },
+              "threshold_bpm": 80.33,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "prerequisite"
+          },
+          {
+            "action": "motion",
+            "args": {
+              "event": 1
+            },
+            "result": {
+              "before": {
+                "window_s": [
+                  0,
+                  465
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    0,
+                    465
+                  ],
+                  "valid_s": 465,
+                  "total_s": 465,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 64.962989,
+                  "median": 64.2,
+                  "sd": 6.303003,
+                  "min": 53.6,
+                  "max": 83.0
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    0,
+                    465
+                  ],
+                  "valid_s": 465,
+                  "total_s": 465,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.049704,
+                  "median": 0.045025,
+                  "sd": 0.026757,
+                  "min": 0.022237,
+                  "max": 0.393345
+                }
+              },
+              "during": {
+                "window_s": [
+                  465,
+                  960
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "valid_s": 495,
+                  "total_s": 495,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 112.962505,
+                  "median": 113.25,
+                  "sd": 9.159554,
+                  "min": 80.5,
+                  "max": 128.27
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "valid_s": 495,
+                  "total_s": 495,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.086513,
+                  "median": 0.079038,
+                  "sd": 0.042651,
+                  "min": 0.038509,
+                  "max": 0.642011
+                }
+              },
+              "after": null,
+              "during_minus_before_motion_g": 0.036809,
+              "relative_motion": "higher",
+              "note": "Wrist acceleration measures local motion. Timing alone cannot establish a cause."
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "shown": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  960
+                ],
+                "valid_s": 960,
+                "total_s": 960,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 89.71274,
+                "median": 89.345,
+                "sd": 25.25725,
+                "min": 53.6,
+                "max": 128.27
+              },
+              "last_vs_first_minute_bpm": 53.502,
+              "events": [
+                {
+                  "id": 1,
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "peak_bpm": 128.27,
+                  "mean_bpm": 112.962505,
+                  "peak_above_baseline_bpm": 57.94
+                }
+              ],
+              "event_count": 1,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 68.986917,
+                "median": 70.33,
+                "sd": 6.490537,
+                "min": 54.1,
+                "max": 83.0
+              },
+              "threshold_bpm": 80.33,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "prerequisite"
+          },
+          {
+            "action": "motion",
+            "args": {
+              "event": 1
+            },
+            "result": {
+              "before": {
+                "window_s": [
+                  0,
+                  465
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    0,
+                    465
+                  ],
+                  "valid_s": 465,
+                  "total_s": 465,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 64.962989,
+                  "median": 64.2,
+                  "sd": 6.303003,
+                  "min": 53.6,
+                  "max": 83.0
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    0,
+                    465
+                  ],
+                  "valid_s": 465,
+                  "total_s": 465,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.049704,
+                  "median": 0.045025,
+                  "sd": 0.026757,
+                  "min": 0.022237,
+                  "max": 0.393345
+                }
+              },
+              "during": {
+                "window_s": [
+                  465,
+                  960
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "valid_s": 495,
+                  "total_s": 495,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 112.962505,
+                  "median": 113.25,
+                  "sd": 9.159554,
+                  "min": 80.5,
+                  "max": 128.27
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "valid_s": 495,
+                  "total_s": 495,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.086513,
+                  "median": 0.079038,
+                  "sd": 0.042651,
+                  "min": 0.038509,
+                  "max": 0.642011
+                }
+              },
+              "after": null,
+              "during_minus_before_motion_g": 0.036809,
+              "relative_motion": "higher",
+              "note": "Wrist acceleration measures local motion. Timing alone cannot establish a cause."
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "message": "",
+        "errors": [],
+        "model_calls": 1,
+        "elapsed_s": 0.032,
+        "goal": "motion",
+        "stop_reason": "goal_satisfied",
+        "safeguards": []
+      },
+      "displayed": "Heart rate, 00:00 to 16:00: mean 89.7, median 89.3, SD 25.3 bpm (960/960 valid seconds).\n  Range 53.6 to 128.3 bpm.\n  Last vs. first minute mean: +53.5 bpm.\n  Baseline median 70.3 bpm (120/120 valid seconds). Event rule: at least 20 s at or above 80.3 bpm.\n  Event 1: 07:45 to 16:00, mean 113.0, peak 128.3 bpm (+57.9 bpm vs. baseline).\nWrist movement around the selected interval\n  Before (00:00 to 07:45)\n    Heart rate: mean 65.0, median 64.2, SD 6.3 bpm (465/465 valid seconds)\n    Wrist movement: mean 0.0497, median 0.0450, SD 0.0268 g RMS (465/465 valid seconds)\n  During (07:45 to 16:00)\n    Heart rate: mean 113.0, median 113.2, SD 9.2 bpm (495/495 valid seconds)\n    Wrist movement: mean 0.0865, median 0.0790, SD 0.0427 g RMS (495/495 valid seconds)\n  After: outside excerpt.\n  Movement during the window was higher than before (+0.0368 g RMS).\n  Wrist acceleration measures local motion. Timing alone cannot establish a cause.",
+      "responses": [
+        {
+          "content": "motion",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 1,
+              "prompt_tokens": 222,
+              "total_tokens": 223,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 221,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 53.143434128713395,
+              "ttft_ms": 8,
+              "decode_token_per_second": 53.143434128713395
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-b8b2d217-6e39-41e9-a516-39fee6bd4ed1",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "steady_pair_3",
+      "recording": "steady",
+      "question": "Investigate the largest heart-rate increase. Was it accompanied by increased wrist movement?",
+      "expected_tools": [
+        "heart"
+      ],
+      "expected_args": null,
+      "expected_status": "ok",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "expected_goal": "motion",
+      "passed": true,
+      "run": {
+        "status": "ok",
+        "steps": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  360
+                ],
+                "valid_s": 360,
+                "total_s": 360,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 99.393944,
+                "median": 98.98,
+                "sd": 2.110535,
+                "min": 96.58,
+                "max": 103.55
+              },
+              "last_vs_first_minute_bpm": 4.342,
+              "events": [],
+              "event_count": 0,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 98.2,
+                "median": 98.14,
+                "sd": 0.954478,
+                "min": 96.77,
+                "max": 100.13
+              },
+              "threshold_bpm": 108.14,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "prerequisite"
+          }
+        ],
+        "shown": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  360
+                ],
+                "valid_s": 360,
+                "total_s": 360,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 99.393944,
+                "median": 98.98,
+                "sd": 2.110535,
+                "min": 96.58,
+                "max": 103.55
+              },
+              "last_vs_first_minute_bpm": 4.342,
+              "events": [],
+              "event_count": 0,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 98.2,
+                "median": 98.14,
+                "sd": 0.954478,
+                "min": 96.77,
+                "max": 100.13
+              },
+              "threshold_bpm": 108.14,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "prerequisite"
+          }
+        ],
+        "message": "",
+        "errors": [],
+        "model_calls": 1,
+        "elapsed_s": 0.028,
+        "goal": "motion",
+        "stop_reason": "no_event_evidence",
+        "safeguards": [
+          "event_followup_unavailable"
+        ]
+      },
+      "displayed": "Heart rate, 00:00 to 06:00: mean 99.4, median 99.0, SD 2.1 bpm (360/360 valid seconds).\n  Range 96.6 to 103.5 bpm.\n  Last vs. first minute mean: +4.3 bpm.\n  Baseline median 98.1 bpm (120/120 valid seconds). Event rule: at least 20 s at or above 108.1 bpm.\n  No sustained elevation met this recording-relative rule.",
+      "responses": [
+        {
+          "content": "motion",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 1,
+              "prompt_tokens": 222,
+              "total_tokens": 223,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 221,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 52.25479437738412,
+              "ttft_ms": 8,
+              "decode_token_per_second": 52.25479437738412
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-059480d4-052f-4fdb-a0a4-f6986fe7ed92",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "coverage_paraphrase",
+      "recording": "offset",
+      "question": "Did either channel miss any samples?",
+      "expected_tools": [
+        "quality"
+      ],
+      "expected_args": null,
+      "expected_status": "ok",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "expected_goal": "quality",
+      "passed": false,
+      "run": {
+        "status": "unsupported",
+        "steps": [],
+        "shown": [],
+        "message": "I can investigate recorded heart rate, wrist motion and signal quality.",
+        "errors": [],
+        "model_calls": 1,
+        "elapsed_s": 0.057,
+        "goal": "unsupported",
+        "stop_reason": "model_declined",
+        "safeguards": []
+      },
+      "displayed": "I can investigate recorded heart rate, wrist motion and signal quality.",
+      "responses": [
+        {
+          "content": "unsupported",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 1,
+              "prompt_tokens": 213,
+              "total_tokens": 214,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 201,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 20.32726903140563,
+              "ttft_ms": 37,
+              "decode_token_per_second": 20.32726903140563
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-cac8fc93-f8d3-43b0-a607-8e2e35c65b1f",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "motion_paraphrase",
+      "recording": "rising",
+      "question": "Was the biggest pulse spike accompanied by wrist activity?",
+      "expected_tools": [
+        "heart",
+        "motion"
+      ],
+      "expected_args": {
+        "event": 1
+      },
+      "expected_status": "ok",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "expected_goal": "motion",
+      "passed": true,
+      "run": {
+        "status": "ok",
+        "steps": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  960
+                ],
+                "valid_s": 960,
+                "total_s": 960,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 89.71274,
+                "median": 89.345,
+                "sd": 25.25725,
+                "min": 53.6,
+                "max": 128.27
+              },
+              "last_vs_first_minute_bpm": 53.502,
+              "events": [
+                {
+                  "id": 1,
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "peak_bpm": 128.27,
+                  "mean_bpm": 112.962505,
+                  "peak_above_baseline_bpm": 57.94
+                }
+              ],
+              "event_count": 1,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 68.986917,
+                "median": 70.33,
+                "sd": 6.490537,
+                "min": 54.1,
+                "max": 83.0
+              },
+              "threshold_bpm": 80.33,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "prerequisite"
+          },
+          {
+            "action": "motion",
+            "args": {
+              "event": 1
+            },
+            "result": {
+              "before": {
+                "window_s": [
+                  0,
+                  465
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    0,
+                    465
+                  ],
+                  "valid_s": 465,
+                  "total_s": 465,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 64.962989,
+                  "median": 64.2,
+                  "sd": 6.303003,
+                  "min": 53.6,
+                  "max": 83.0
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    0,
+                    465
+                  ],
+                  "valid_s": 465,
+                  "total_s": 465,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.049704,
+                  "median": 0.045025,
+                  "sd": 0.026757,
+                  "min": 0.022237,
+                  "max": 0.393345
+                }
+              },
+              "during": {
+                "window_s": [
+                  465,
+                  960
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "valid_s": 495,
+                  "total_s": 495,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 112.962505,
+                  "median": 113.25,
+                  "sd": 9.159554,
+                  "min": 80.5,
+                  "max": 128.27
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "valid_s": 495,
+                  "total_s": 495,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.086513,
+                  "median": 0.079038,
+                  "sd": 0.042651,
+                  "min": 0.038509,
+                  "max": 0.642011
+                }
+              },
+              "after": null,
+              "during_minus_before_motion_g": 0.036809,
+              "relative_motion": "higher",
+              "note": "Wrist acceleration measures local motion. Timing alone cannot establish a cause."
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "shown": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  960
+                ],
+                "valid_s": 960,
+                "total_s": 960,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 89.71274,
+                "median": 89.345,
+                "sd": 25.25725,
+                "min": 53.6,
+                "max": 128.27
+              },
+              "last_vs_first_minute_bpm": 53.502,
+              "events": [
+                {
+                  "id": 1,
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "peak_bpm": 128.27,
+                  "mean_bpm": 112.962505,
+                  "peak_above_baseline_bpm": 57.94
+                }
+              ],
+              "event_count": 1,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 68.986917,
+                "median": 70.33,
+                "sd": 6.490537,
+                "min": 54.1,
+                "max": 83.0
+              },
+              "threshold_bpm": 80.33,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "prerequisite"
+          },
+          {
+            "action": "motion",
+            "args": {
+              "event": 1
+            },
+            "result": {
+              "before": {
+                "window_s": [
+                  0,
+                  465
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    0,
+                    465
+                  ],
+                  "valid_s": 465,
+                  "total_s": 465,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 64.962989,
+                  "median": 64.2,
+                  "sd": 6.303003,
+                  "min": 53.6,
+                  "max": 83.0
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    0,
+                    465
+                  ],
+                  "valid_s": 465,
+                  "total_s": 465,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.049704,
+                  "median": 0.045025,
+                  "sd": 0.026757,
+                  "min": 0.022237,
+                  "max": 0.393345
+                }
+              },
+              "during": {
+                "window_s": [
+                  465,
+                  960
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "valid_s": 495,
+                  "total_s": 495,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 112.962505,
+                  "median": 113.25,
+                  "sd": 9.159554,
+                  "min": 80.5,
+                  "max": 128.27
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "valid_s": 495,
+                  "total_s": 495,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.086513,
+                  "median": 0.079038,
+                  "sd": 0.042651,
+                  "min": 0.038509,
+                  "max": 0.642011
+                }
+              },
+              "after": null,
+              "during_minus_before_motion_g": 0.036809,
+              "relative_motion": "higher",
+              "note": "Wrist acceleration measures local motion. Timing alone cannot establish a cause."
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "message": "",
+        "errors": [],
+        "model_calls": 1,
+        "elapsed_s": 0.059,
+        "goal": "motion",
+        "stop_reason": "goal_satisfied",
+        "safeguards": []
+      },
+      "displayed": "Heart rate, 00:00 to 16:00: mean 89.7, median 89.3, SD 25.3 bpm (960/960 valid seconds).\n  Range 53.6 to 128.3 bpm.\n  Last vs. first minute mean: +53.5 bpm.\n  Baseline median 70.3 bpm (120/120 valid seconds). Event rule: at least 20 s at or above 80.3 bpm.\n  Event 1: 07:45 to 16:00, mean 113.0, peak 128.3 bpm (+57.9 bpm vs. baseline).\nWrist movement around the selected interval\n  Before (00:00 to 07:45)\n    Heart rate: mean 65.0, median 64.2, SD 6.3 bpm (465/465 valid seconds)\n    Wrist movement: mean 0.0497, median 0.0450, SD 0.0268 g RMS (465/465 valid seconds)\n  During (07:45 to 16:00)\n    Heart rate: mean 113.0, median 113.2, SD 9.2 bpm (495/495 valid seconds)\n    Wrist movement: mean 0.0865, median 0.0790, SD 0.0427 g RMS (495/495 valid seconds)\n  After: outside excerpt.\n  Movement during the window was higher than before (+0.0368 g RMS).\n  Wrist acceleration measures local motion. Timing alone cannot establish a cause.",
+      "responses": [
+        {
+          "content": "motion",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 1,
+              "prompt_tokens": 216,
+              "total_tokens": 217,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 201,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 21.224212581713218,
+              "ttft_ms": 35,
+              "decode_token_per_second": 21.224212581713218
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-84bfb491-33cb-4437-b00d-010d19a79dc9",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "comparison_paraphrase",
+      "recording": "offset",
+      "question": "Contrast 00:00\u201301:00 with 01:00\u201302:00 for heart rate and wrist movement.",
+      "expected_tools": [
+        "compare"
+      ],
+      "expected_args": {
+        "a": [
+          0,
+          60
+        ],
+        "b": [
+          60,
+          120
+        ]
+      },
+      "expected_status": "ok",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "expected_goal": "compare",
+      "passed": true,
+      "run": {
+        "status": "ok",
+        "steps": [
+          {
+            "action": "compare",
+            "args": {
+              "a": [
+                0,
+                60
+              ],
+              "b": [
+                60,
+                120
+              ]
+            },
+            "result": {
+              "a": {
+                "window_s": [
+                  0,
+                  60
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    0,
+                    60
+                  ],
+                  "valid_s": 50,
+                  "total_s": 60,
+                  "coverage": 0.8333,
+                  "status": "ok",
+                  "mean": 59.023,
+                  "median": 58.17,
+                  "sd": 2.941897,
+                  "min": 57.0,
+                  "max": 72.0
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    0,
+                    60
+                  ],
+                  "valid_s": 60,
+                  "total_s": 60,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.044415,
+                  "median": 0.041364,
+                  "sd": 0.010497,
+                  "min": 0.027999,
+                  "max": 0.084016
+                }
+              },
+              "b": {
+                "window_s": [
+                  60,
+                  120
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    60,
+                    120
+                  ],
+                  "valid_s": 60,
+                  "total_s": 60,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 67.599167,
+                  "median": 67.66,
+                  "sd": 4.877611,
+                  "min": 58.78,
+                  "max": 74.97
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    60,
+                    120
+                  ],
+                  "valid_s": 60,
+                  "total_s": 60,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.07527,
+                  "median": 0.06807,
+                  "sd": 0.036238,
+                  "min": 0.031013,
+                  "max": 0.190545
+                }
+              },
+              "b_minus_a_bpm": 8.576167,
+              "b_minus_a_motion_g": 0.030855
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "shown": [
+          {
+            "action": "compare",
+            "args": {
+              "a": [
+                0,
+                60
+              ],
+              "b": [
+                60,
+                120
+              ]
+            },
+            "result": {
+              "a": {
+                "window_s": [
+                  0,
+                  60
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    0,
+                    60
+                  ],
+                  "valid_s": 50,
+                  "total_s": 60,
+                  "coverage": 0.8333,
+                  "status": "ok",
+                  "mean": 59.023,
+                  "median": 58.17,
+                  "sd": 2.941897,
+                  "min": 57.0,
+                  "max": 72.0
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    0,
+                    60
+                  ],
+                  "valid_s": 60,
+                  "total_s": 60,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.044415,
+                  "median": 0.041364,
+                  "sd": 0.010497,
+                  "min": 0.027999,
+                  "max": 0.084016
+                }
+              },
+              "b": {
+                "window_s": [
+                  60,
+                  120
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    60,
+                    120
+                  ],
+                  "valid_s": 60,
+                  "total_s": 60,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 67.599167,
+                  "median": 67.66,
+                  "sd": 4.877611,
+                  "min": 58.78,
+                  "max": 74.97
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    60,
+                    120
+                  ],
+                  "valid_s": 60,
+                  "total_s": 60,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.07527,
+                  "median": 0.06807,
+                  "sd": 0.036238,
+                  "min": 0.031013,
+                  "max": 0.190545
+                }
+              },
+              "b_minus_a_bpm": 8.576167,
+              "b_minus_a_motion_g": 0.030855
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "message": "",
+        "errors": [],
+        "model_calls": 1,
+        "elapsed_s": 0.069,
+        "goal": "compare",
+        "stop_reason": "goal_satisfied",
+        "safeguards": []
+      },
+      "displayed": "Interval comparison (B minus A)\n  A (00:00 to 01:00)\n    Heart rate: mean 59.0, median 58.2, SD 2.9 bpm (50/60 valid seconds)\n    Wrist movement: mean 0.0444, median 0.0414, SD 0.0105 g RMS (60/60 valid seconds)\n  B (01:00 to 02:00)\n    Heart rate: mean 67.6, median 67.7, SD 4.9 bpm (60/60 valid seconds)\n    Wrist movement: mean 0.0753, median 0.0681, SD 0.0362 g RMS (60/60 valid seconds)\n  Mean heart rate: +8.6 bpm.\n  Mean wrist movement: +0.0309 g RMS.",
+      "responses": [
+        {
+          "content": "compare",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 1,
+              "prompt_tokens": 240,
+              "total_tokens": 241,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 201,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 17.12798026856673,
+              "ttft_ms": 47,
+              "decode_token_per_second": 17.12798026856673
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-20033c1e-e2d6-48eb-bb88-741bca8ae649",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    }
+  ],
+  "synthetic_event_cases": [
+    {
+      "name": "observed_earlier_80_90",
+      "recording": "synthetic_80_90",
+      "question": "Check wrist movement at the earlier heart-rate event.",
+      "expected_tools": [
+        "heart",
+        "motion"
+      ],
+      "expected_args": {
+        "event": 2
+      },
+      "expected_status": "ok",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "expected_goal": "motion",
+      "passed": true,
+      "run": {
+        "status": "ok",
+        "steps": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  200
+                ],
+                "valid_s": 200,
+                "total_s": 200,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 67.5,
+                "median": 60.0,
+                "sd": 11.779219,
+                "min": 60,
+                "max": 90
+              },
+              "last_vs_first_minute_bpm": 18.333,
+              "events": [
+                {
+                  "id": 1,
+                  "window_s": [
+                    170,
+                    200
+                  ],
+                  "peak_bpm": 90,
+                  "mean_bpm": 90,
+                  "peak_above_baseline_bpm": 30.0
+                },
+                {
+                  "id": 2,
+                  "window_s": [
+                    120,
+                    150
+                  ],
+                  "peak_bpm": 80,
+                  "mean_bpm": 80,
+                  "peak_above_baseline_bpm": 20.0
+                }
+              ],
+              "event_count": 2,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 60,
+                "median": 60.0,
+                "sd": 0.0,
+                "min": 60,
+                "max": 60
+              },
+              "threshold_bpm": 70.0,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "prerequisite"
+          },
+          {
+            "action": "motion",
+            "args": {
+              "event": 2
+            },
+            "result": {
+              "before": {
+                "window_s": [
+                  90,
+                  120
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    90,
+                    120
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 60,
+                  "median": 60.0,
+                  "sd": 0.0,
+                  "min": 60,
+                  "max": 60
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    90,
+                    120
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.03,
+                  "median": 0.03,
+                  "sd": 0.0,
+                  "min": 0.03,
+                  "max": 0.03
+                }
+              },
+              "during": {
+                "window_s": [
+                  120,
+                  150
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    120,
+                    150
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 80,
+                  "median": 80.0,
+                  "sd": 0.0,
+                  "min": 80,
+                  "max": 80
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    120,
+                    150
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.03,
+                  "median": 0.03,
+                  "sd": 0.0,
+                  "min": 0.03,
+                  "max": 0.03
+                }
+              },
+              "after": {
+                "window_s": [
+                  150,
+                  180
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    150,
+                    180
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 70,
+                  "median": 60.0,
+                  "sd": 14.142136,
+                  "min": 60,
+                  "max": 90
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    150,
+                    180
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.03,
+                  "median": 0.03,
+                  "sd": 0.0,
+                  "min": 0.03,
+                  "max": 0.03
+                }
+              },
+              "during_minus_before_motion_g": 0.0,
+              "relative_motion": "similar",
+              "note": "Wrist acceleration measures local motion. Timing alone cannot establish a cause."
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "shown": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  200
+                ],
+                "valid_s": 200,
+                "total_s": 200,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 67.5,
+                "median": 60.0,
+                "sd": 11.779219,
+                "min": 60,
+                "max": 90
+              },
+              "last_vs_first_minute_bpm": 18.333,
+              "events": [
+                {
+                  "id": 1,
+                  "window_s": [
+                    170,
+                    200
+                  ],
+                  "peak_bpm": 90,
+                  "mean_bpm": 90,
+                  "peak_above_baseline_bpm": 30.0
+                },
+                {
+                  "id": 2,
+                  "window_s": [
+                    120,
+                    150
+                  ],
+                  "peak_bpm": 80,
+                  "mean_bpm": 80,
+                  "peak_above_baseline_bpm": 20.0
+                }
+              ],
+              "event_count": 2,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 60,
+                "median": 60.0,
+                "sd": 0.0,
+                "min": 60,
+                "max": 60
+              },
+              "threshold_bpm": 70.0,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "prerequisite"
+          },
+          {
+            "action": "motion",
+            "args": {
+              "event": 2
+            },
+            "result": {
+              "before": {
+                "window_s": [
+                  90,
+                  120
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    90,
+                    120
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 60,
+                  "median": 60.0,
+                  "sd": 0.0,
+                  "min": 60,
+                  "max": 60
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    90,
+                    120
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.03,
+                  "median": 0.03,
+                  "sd": 0.0,
+                  "min": 0.03,
+                  "max": 0.03
+                }
+              },
+              "during": {
+                "window_s": [
+                  120,
+                  150
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    120,
+                    150
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 80,
+                  "median": 80.0,
+                  "sd": 0.0,
+                  "min": 80,
+                  "max": 80
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    120,
+                    150
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.03,
+                  "median": 0.03,
+                  "sd": 0.0,
+                  "min": 0.03,
+                  "max": 0.03
+                }
+              },
+              "after": {
+                "window_s": [
+                  150,
+                  180
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    150,
+                    180
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 70,
+                  "median": 60.0,
+                  "sd": 14.142136,
+                  "min": 60,
+                  "max": 90
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    150,
+                    180
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.03,
+                  "median": 0.03,
+                  "sd": 0.0,
+                  "min": 0.03,
+                  "max": 0.03
+                }
+              },
+              "during_minus_before_motion_g": 0.0,
+              "relative_motion": "similar",
+              "note": "Wrist acceleration measures local motion. Timing alone cannot establish a cause."
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "message": "",
+        "errors": [],
+        "model_calls": 2,
+        "elapsed_s": 0.168,
+        "goal": "motion",
+        "stop_reason": "goal_satisfied",
+        "safeguards": []
+      },
+      "displayed": "Heart rate, 00:00 to 03:20: mean 67.5, median 60.0, SD 11.8 bpm (200/200 valid seconds).\n  Range 60.0 to 90.0 bpm.\n  Last vs. first minute mean: +18.3 bpm.\n  Baseline median 60.0 bpm (120/120 valid seconds). Event rule: at least 20 s at or above 70.0 bpm.\n  Event 1: 02:50 to 03:20, mean 90.0, peak 90.0 bpm (+30.0 bpm vs. baseline).\n  Event 2: 02:00 to 02:30, mean 80.0, peak 80.0 bpm (+20.0 bpm vs. baseline).\nWrist movement around the selected interval\n  Before (01:30 to 02:00)\n    Heart rate: mean 60.0, median 60.0, SD 0.0 bpm (30/30 valid seconds)\n    Wrist movement: mean 0.0300, median 0.0300, SD 0.0000 g RMS (30/30 valid seconds)\n  During (02:00 to 02:30)\n    Heart rate: mean 80.0, median 80.0, SD 0.0 bpm (30/30 valid seconds)\n    Wrist movement: mean 0.0300, median 0.0300, SD 0.0000 g RMS (30/30 valid seconds)\n  After (02:30 to 03:00)\n    Heart rate: mean 70.0, median 60.0, SD 14.1 bpm (30/30 valid seconds)\n    Wrist movement: mean 0.0300, median 0.0300, SD 0.0000 g RMS (30/30 valid seconds)\n  Movement during the window was similar to before (+0.0000 g RMS).\n  Wrist acceleration measures local motion. Timing alone cannot establish a cause.",
+      "responses": [
+        {
+          "content": "motion",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 1,
+              "prompt_tokens": 216,
+              "total_tokens": 217,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 201,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 21.56287735035363,
+              "ttft_ms": 35,
+              "decode_token_per_second": 21.56287735035363
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-b471213c-1b31-47e0-a422-f9b9fa6a5721",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        },
+        {
+          "content": "2",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 1,
+              "prompt_tokens": 160,
+              "total_tokens": 161,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 3,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 10.179774823380907,
+              "ttft_ms": 87,
+              "decode_token_per_second": 10.179774823380907
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-37ca250a-8150-420d-8f49-9c1d4e6a5649",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "observed_later_80_90",
+      "recording": "synthetic_80_90",
+      "question": "Check wrist movement at the later heart-rate event.",
+      "expected_tools": [
+        "heart",
+        "motion"
+      ],
+      "expected_args": {
+        "event": 1
+      },
+      "expected_status": "ok",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "expected_goal": "motion",
+      "passed": true,
+      "run": {
+        "status": "ok",
+        "steps": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  200
+                ],
+                "valid_s": 200,
+                "total_s": 200,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 67.5,
+                "median": 60.0,
+                "sd": 11.779219,
+                "min": 60,
+                "max": 90
+              },
+              "last_vs_first_minute_bpm": 18.333,
+              "events": [
+                {
+                  "id": 1,
+                  "window_s": [
+                    170,
+                    200
+                  ],
+                  "peak_bpm": 90,
+                  "mean_bpm": 90,
+                  "peak_above_baseline_bpm": 30.0
+                },
+                {
+                  "id": 2,
+                  "window_s": [
+                    120,
+                    150
+                  ],
+                  "peak_bpm": 80,
+                  "mean_bpm": 80,
+                  "peak_above_baseline_bpm": 20.0
+                }
+              ],
+              "event_count": 2,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 60,
+                "median": 60.0,
+                "sd": 0.0,
+                "min": 60,
+                "max": 60
+              },
+              "threshold_bpm": 70.0,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "prerequisite"
+          },
+          {
+            "action": "motion",
+            "args": {
+              "event": 1
+            },
+            "result": {
+              "before": {
+                "window_s": [
+                  140,
+                  170
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    140,
+                    170
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 66.666667,
+                  "median": 60.0,
+                  "sd": 9.42809,
+                  "min": 60,
+                  "max": 80
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    140,
+                    170
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.03,
+                  "median": 0.03,
+                  "sd": 0.0,
+                  "min": 0.03,
+                  "max": 0.03
+                }
+              },
+              "during": {
+                "window_s": [
+                  170,
+                  200
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    170,
+                    200
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 90,
+                  "median": 90.0,
+                  "sd": 0.0,
+                  "min": 90,
+                  "max": 90
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    170,
+                    200
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.03,
+                  "median": 0.03,
+                  "sd": 0.0,
+                  "min": 0.03,
+                  "max": 0.03
+                }
+              },
+              "after": null,
+              "during_minus_before_motion_g": 0.0,
+              "relative_motion": "similar",
+              "note": "Wrist acceleration measures local motion. Timing alone cannot establish a cause."
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "shown": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  200
+                ],
+                "valid_s": 200,
+                "total_s": 200,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 67.5,
+                "median": 60.0,
+                "sd": 11.779219,
+                "min": 60,
+                "max": 90
+              },
+              "last_vs_first_minute_bpm": 18.333,
+              "events": [
+                {
+                  "id": 1,
+                  "window_s": [
+                    170,
+                    200
+                  ],
+                  "peak_bpm": 90,
+                  "mean_bpm": 90,
+                  "peak_above_baseline_bpm": 30.0
+                },
+                {
+                  "id": 2,
+                  "window_s": [
+                    120,
+                    150
+                  ],
+                  "peak_bpm": 80,
+                  "mean_bpm": 80,
+                  "peak_above_baseline_bpm": 20.0
+                }
+              ],
+              "event_count": 2,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 60,
+                "median": 60.0,
+                "sd": 0.0,
+                "min": 60,
+                "max": 60
+              },
+              "threshold_bpm": 70.0,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "prerequisite"
+          },
+          {
+            "action": "motion",
+            "args": {
+              "event": 1
+            },
+            "result": {
+              "before": {
+                "window_s": [
+                  140,
+                  170
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    140,
+                    170
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 66.666667,
+                  "median": 60.0,
+                  "sd": 9.42809,
+                  "min": 60,
+                  "max": 80
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    140,
+                    170
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.03,
+                  "median": 0.03,
+                  "sd": 0.0,
+                  "min": 0.03,
+                  "max": 0.03
+                }
+              },
+              "during": {
+                "window_s": [
+                  170,
+                  200
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    170,
+                    200
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 90,
+                  "median": 90.0,
+                  "sd": 0.0,
+                  "min": 90,
+                  "max": 90
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    170,
+                    200
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.03,
+                  "median": 0.03,
+                  "sd": 0.0,
+                  "min": 0.03,
+                  "max": 0.03
+                }
+              },
+              "after": null,
+              "during_minus_before_motion_g": 0.0,
+              "relative_motion": "similar",
+              "note": "Wrist acceleration measures local motion. Timing alone cannot establish a cause."
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "message": "",
+        "errors": [],
+        "model_calls": 2,
+        "elapsed_s": 0.254,
+        "goal": "motion",
+        "stop_reason": "goal_satisfied",
+        "safeguards": []
+      },
+      "displayed": "Heart rate, 00:00 to 03:20: mean 67.5, median 60.0, SD 11.8 bpm (200/200 valid seconds).\n  Range 60.0 to 90.0 bpm.\n  Last vs. first minute mean: +18.3 bpm.\n  Baseline median 60.0 bpm (120/120 valid seconds). Event rule: at least 20 s at or above 70.0 bpm.\n  Event 1: 02:50 to 03:20, mean 90.0, peak 90.0 bpm (+30.0 bpm vs. baseline).\n  Event 2: 02:00 to 02:30, mean 80.0, peak 80.0 bpm (+20.0 bpm vs. baseline).\nWrist movement around the selected interval\n  Before (02:20 to 02:50)\n    Heart rate: mean 66.7, median 60.0, SD 9.4 bpm (30/30 valid seconds)\n    Wrist movement: mean 0.0300, median 0.0300, SD 0.0000 g RMS (30/30 valid seconds)\n  During (02:50 to 03:20)\n    Heart rate: mean 90.0, median 90.0, SD 0.0 bpm (30/30 valid seconds)\n    Wrist movement: mean 0.0300, median 0.0300, SD 0.0000 g RMS (30/30 valid seconds)\n  After: outside excerpt.\n  Movement during the window was similar to before (+0.0000 g RMS).\n  Wrist acceleration measures local motion. Timing alone cannot establish a cause.",
+      "responses": [
+        {
+          "content": "motion",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 1,
+              "prompt_tokens": 216,
+              "total_tokens": 217,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 3,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 7.8708550109798425,
+              "ttft_ms": 115,
+              "decode_token_per_second": 7.8708550109798425
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-759887b8-08e4-4fc9-91c6-142852c55fea",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        },
+        {
+          "content": "1",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 1,
+              "prompt_tokens": 160,
+              "total_tokens": 161,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 3,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 9.943125323151573,
+              "ttft_ms": 88,
+              "decode_token_per_second": 9.943125323151573
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-3d02f71d-a6d1-44a1-996d-576b7568419c",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "observed_earlier_90_80",
+      "recording": "synthetic_90_80",
+      "question": "Check wrist movement at the earlier heart-rate event.",
+      "expected_tools": [
+        "heart",
+        "motion"
+      ],
+      "expected_args": {
+        "event": 1
+      },
+      "expected_status": "ok",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "expected_goal": "motion",
+      "passed": true,
+      "run": {
+        "status": "ok",
+        "steps": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  200
+                ],
+                "valid_s": 200,
+                "total_s": 200,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 67.5,
+                "median": 60.0,
+                "sd": 11.779219,
+                "min": 60,
+                "max": 90
+              },
+              "last_vs_first_minute_bpm": 15,
+              "events": [
+                {
+                  "id": 1,
+                  "window_s": [
+                    120,
+                    150
+                  ],
+                  "peak_bpm": 90,
+                  "mean_bpm": 90,
+                  "peak_above_baseline_bpm": 30.0
+                },
+                {
+                  "id": 2,
+                  "window_s": [
+                    170,
+                    200
+                  ],
+                  "peak_bpm": 80,
+                  "mean_bpm": 80,
+                  "peak_above_baseline_bpm": 20.0
+                }
+              ],
+              "event_count": 2,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 60,
+                "median": 60.0,
+                "sd": 0.0,
+                "min": 60,
+                "max": 60
+              },
+              "threshold_bpm": 70.0,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "prerequisite"
+          },
+          {
+            "action": "motion",
+            "args": {
+              "event": 1
+            },
+            "result": {
+              "before": {
+                "window_s": [
+                  90,
+                  120
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    90,
+                    120
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 60,
+                  "median": 60.0,
+                  "sd": 0.0,
+                  "min": 60,
+                  "max": 60
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    90,
+                    120
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.03,
+                  "median": 0.03,
+                  "sd": 0.0,
+                  "min": 0.03,
+                  "max": 0.03
+                }
+              },
+              "during": {
+                "window_s": [
+                  120,
+                  150
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    120,
+                    150
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 90,
+                  "median": 90.0,
+                  "sd": 0.0,
+                  "min": 90,
+                  "max": 90
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    120,
+                    150
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.03,
+                  "median": 0.03,
+                  "sd": 0.0,
+                  "min": 0.03,
+                  "max": 0.03
+                }
+              },
+              "after": {
+                "window_s": [
+                  150,
+                  180
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    150,
+                    180
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 66.666667,
+                  "median": 60.0,
+                  "sd": 9.42809,
+                  "min": 60,
+                  "max": 80
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    150,
+                    180
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.03,
+                  "median": 0.03,
+                  "sd": 0.0,
+                  "min": 0.03,
+                  "max": 0.03
+                }
+              },
+              "during_minus_before_motion_g": 0.0,
+              "relative_motion": "similar",
+              "note": "Wrist acceleration measures local motion. Timing alone cannot establish a cause."
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "shown": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  200
+                ],
+                "valid_s": 200,
+                "total_s": 200,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 67.5,
+                "median": 60.0,
+                "sd": 11.779219,
+                "min": 60,
+                "max": 90
+              },
+              "last_vs_first_minute_bpm": 15,
+              "events": [
+                {
+                  "id": 1,
+                  "window_s": [
+                    120,
+                    150
+                  ],
+                  "peak_bpm": 90,
+                  "mean_bpm": 90,
+                  "peak_above_baseline_bpm": 30.0
+                },
+                {
+                  "id": 2,
+                  "window_s": [
+                    170,
+                    200
+                  ],
+                  "peak_bpm": 80,
+                  "mean_bpm": 80,
+                  "peak_above_baseline_bpm": 20.0
+                }
+              ],
+              "event_count": 2,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 60,
+                "median": 60.0,
+                "sd": 0.0,
+                "min": 60,
+                "max": 60
+              },
+              "threshold_bpm": 70.0,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "prerequisite"
+          },
+          {
+            "action": "motion",
+            "args": {
+              "event": 1
+            },
+            "result": {
+              "before": {
+                "window_s": [
+                  90,
+                  120
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    90,
+                    120
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 60,
+                  "median": 60.0,
+                  "sd": 0.0,
+                  "min": 60,
+                  "max": 60
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    90,
+                    120
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.03,
+                  "median": 0.03,
+                  "sd": 0.0,
+                  "min": 0.03,
+                  "max": 0.03
+                }
+              },
+              "during": {
+                "window_s": [
+                  120,
+                  150
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    120,
+                    150
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 90,
+                  "median": 90.0,
+                  "sd": 0.0,
+                  "min": 90,
+                  "max": 90
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    120,
+                    150
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.03,
+                  "median": 0.03,
+                  "sd": 0.0,
+                  "min": 0.03,
+                  "max": 0.03
+                }
+              },
+              "after": {
+                "window_s": [
+                  150,
+                  180
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    150,
+                    180
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 66.666667,
+                  "median": 60.0,
+                  "sd": 9.42809,
+                  "min": 60,
+                  "max": 80
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    150,
+                    180
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.03,
+                  "median": 0.03,
+                  "sd": 0.0,
+                  "min": 0.03,
+                  "max": 0.03
+                }
+              },
+              "during_minus_before_motion_g": 0.0,
+              "relative_motion": "similar",
+              "note": "Wrist acceleration measures local motion. Timing alone cannot establish a cause."
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "message": "",
+        "errors": [],
+        "model_calls": 2,
+        "elapsed_s": 0.269,
+        "goal": "motion",
+        "stop_reason": "goal_satisfied",
+        "safeguards": []
+      },
+      "displayed": "Heart rate, 00:00 to 03:20: mean 67.5, median 60.0, SD 11.8 bpm (200/200 valid seconds).\n  Range 60.0 to 90.0 bpm.\n  Last vs. first minute mean: +15.0 bpm.\n  Baseline median 60.0 bpm (120/120 valid seconds). Event rule: at least 20 s at or above 70.0 bpm.\n  Event 1: 02:00 to 02:30, mean 90.0, peak 90.0 bpm (+30.0 bpm vs. baseline).\n  Event 2: 02:50 to 03:20, mean 80.0, peak 80.0 bpm (+20.0 bpm vs. baseline).\nWrist movement around the selected interval\n  Before (01:30 to 02:00)\n    Heart rate: mean 60.0, median 60.0, SD 0.0 bpm (30/30 valid seconds)\n    Wrist movement: mean 0.0300, median 0.0300, SD 0.0000 g RMS (30/30 valid seconds)\n  During (02:00 to 02:30)\n    Heart rate: mean 90.0, median 90.0, SD 0.0 bpm (30/30 valid seconds)\n    Wrist movement: mean 0.0300, median 0.0300, SD 0.0000 g RMS (30/30 valid seconds)\n  After (02:30 to 03:00)\n    Heart rate: mean 66.7, median 60.0, SD 9.4 bpm (30/30 valid seconds)\n    Wrist movement: mean 0.0300, median 0.0300, SD 0.0000 g RMS (30/30 valid seconds)\n  Movement during the window was similar to before (+0.0000 g RMS).\n  Wrist acceleration measures local motion. Timing alone cannot establish a cause.",
+      "responses": [
+        {
+          "content": "motion",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 1,
+              "prompt_tokens": 216,
+              "total_tokens": 217,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 3,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 7.15502067800976,
+              "ttft_ms": 120,
+              "decode_token_per_second": 7.15502067800976
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-ddf069ee-ba72-4a96-a893-dabd5025fea8",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        },
+        {
+          "content": "1",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 1,
+              "prompt_tokens": 160,
+              "total_tokens": 161,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 3,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 9.505793781309707,
+              "ttft_ms": 92,
+              "decode_token_per_second": 9.505793781309707
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-b6198749-640c-44ae-a047-806505e7bb7e",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "observed_later_90_80",
+      "recording": "synthetic_90_80",
+      "question": "Check wrist movement at the later heart-rate event.",
+      "expected_tools": [
+        "heart",
+        "motion"
+      ],
+      "expected_args": {
+        "event": 2
+      },
+      "expected_status": "ok",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "expected_goal": "motion",
+      "passed": true,
+      "run": {
+        "status": "ok",
+        "steps": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  200
+                ],
+                "valid_s": 200,
+                "total_s": 200,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 67.5,
+                "median": 60.0,
+                "sd": 11.779219,
+                "min": 60,
+                "max": 90
+              },
+              "last_vs_first_minute_bpm": 15,
+              "events": [
+                {
+                  "id": 1,
+                  "window_s": [
+                    120,
+                    150
+                  ],
+                  "peak_bpm": 90,
+                  "mean_bpm": 90,
+                  "peak_above_baseline_bpm": 30.0
+                },
+                {
+                  "id": 2,
+                  "window_s": [
+                    170,
+                    200
+                  ],
+                  "peak_bpm": 80,
+                  "mean_bpm": 80,
+                  "peak_above_baseline_bpm": 20.0
+                }
+              ],
+              "event_count": 2,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 60,
+                "median": 60.0,
+                "sd": 0.0,
+                "min": 60,
+                "max": 60
+              },
+              "threshold_bpm": 70.0,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "prerequisite"
+          },
+          {
+            "action": "motion",
+            "args": {
+              "event": 2
+            },
+            "result": {
+              "before": {
+                "window_s": [
+                  140,
+                  170
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    140,
+                    170
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 70,
+                  "median": 60.0,
+                  "sd": 14.142136,
+                  "min": 60,
+                  "max": 90
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    140,
+                    170
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.03,
+                  "median": 0.03,
+                  "sd": 0.0,
+                  "min": 0.03,
+                  "max": 0.03
+                }
+              },
+              "during": {
+                "window_s": [
+                  170,
+                  200
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    170,
+                    200
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 80,
+                  "median": 80.0,
+                  "sd": 0.0,
+                  "min": 80,
+                  "max": 80
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    170,
+                    200
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.03,
+                  "median": 0.03,
+                  "sd": 0.0,
+                  "min": 0.03,
+                  "max": 0.03
+                }
+              },
+              "after": null,
+              "during_minus_before_motion_g": 0.0,
+              "relative_motion": "similar",
+              "note": "Wrist acceleration measures local motion. Timing alone cannot establish a cause."
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "shown": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  200
+                ],
+                "valid_s": 200,
+                "total_s": 200,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 67.5,
+                "median": 60.0,
+                "sd": 11.779219,
+                "min": 60,
+                "max": 90
+              },
+              "last_vs_first_minute_bpm": 15,
+              "events": [
+                {
+                  "id": 1,
+                  "window_s": [
+                    120,
+                    150
+                  ],
+                  "peak_bpm": 90,
+                  "mean_bpm": 90,
+                  "peak_above_baseline_bpm": 30.0
+                },
+                {
+                  "id": 2,
+                  "window_s": [
+                    170,
+                    200
+                  ],
+                  "peak_bpm": 80,
+                  "mean_bpm": 80,
+                  "peak_above_baseline_bpm": 20.0
+                }
+              ],
+              "event_count": 2,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 60,
+                "median": 60.0,
+                "sd": 0.0,
+                "min": 60,
+                "max": 60
+              },
+              "threshold_bpm": 70.0,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "prerequisite"
+          },
+          {
+            "action": "motion",
+            "args": {
+              "event": 2
+            },
+            "result": {
+              "before": {
+                "window_s": [
+                  140,
+                  170
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    140,
+                    170
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 70,
+                  "median": 60.0,
+                  "sd": 14.142136,
+                  "min": 60,
+                  "max": 90
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    140,
+                    170
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.03,
+                  "median": 0.03,
+                  "sd": 0.0,
+                  "min": 0.03,
+                  "max": 0.03
+                }
+              },
+              "during": {
+                "window_s": [
+                  170,
+                  200
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    170,
+                    200
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 80,
+                  "median": 80.0,
+                  "sd": 0.0,
+                  "min": 80,
+                  "max": 80
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    170,
+                    200
+                  ],
+                  "valid_s": 30,
+                  "total_s": 30,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.03,
+                  "median": 0.03,
+                  "sd": 0.0,
+                  "min": 0.03,
+                  "max": 0.03
+                }
+              },
+              "after": null,
+              "during_minus_before_motion_g": 0.0,
+              "relative_motion": "similar",
+              "note": "Wrist acceleration measures local motion. Timing alone cannot establish a cause."
+            },
+            "selected_by": "model_goal"
+          }
+        ],
+        "message": "",
+        "errors": [],
+        "model_calls": 2,
+        "elapsed_s": 0.264,
+        "goal": "motion",
+        "stop_reason": "goal_satisfied",
+        "safeguards": []
+      },
+      "displayed": "Heart rate, 00:00 to 03:20: mean 67.5, median 60.0, SD 11.8 bpm (200/200 valid seconds).\n  Range 60.0 to 90.0 bpm.\n  Last vs. first minute mean: +15.0 bpm.\n  Baseline median 60.0 bpm (120/120 valid seconds). Event rule: at least 20 s at or above 70.0 bpm.\n  Event 1: 02:00 to 02:30, mean 90.0, peak 90.0 bpm (+30.0 bpm vs. baseline).\n  Event 2: 02:50 to 03:20, mean 80.0, peak 80.0 bpm (+20.0 bpm vs. baseline).\nWrist movement around the selected interval\n  Before (02:20 to 02:50)\n    Heart rate: mean 70.0, median 60.0, SD 14.1 bpm (30/30 valid seconds)\n    Wrist movement: mean 0.0300, median 0.0300, SD 0.0000 g RMS (30/30 valid seconds)\n  During (02:50 to 03:20)\n    Heart rate: mean 80.0, median 80.0, SD 0.0 bpm (30/30 valid seconds)\n    Wrist movement: mean 0.0300, median 0.0300, SD 0.0000 g RMS (30/30 valid seconds)\n  After: outside excerpt.\n  Movement during the window was similar to before (+0.0000 g RMS).\n  Wrist acceleration measures local motion. Timing alone cannot establish a cause.",
+      "responses": [
+        {
+          "content": "motion",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 1,
+              "prompt_tokens": 216,
+              "total_tokens": 217,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 3,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 7.470770609988421,
+              "ttft_ms": 120,
+              "decode_token_per_second": 7.470770609988421
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-fc9c9272-8e74-46f2-b3bb-bac433de8fb6",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        },
+        {
+          "content": "2",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 1,
+              "prompt_tokens": 160,
+              "total_tokens": 161,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 3,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 9.68954691678617,
+              "ttft_ms": 90,
+              "decode_token_per_second": 9.68954691678617
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-b846a428-32de-4954-a970-b332cd044171",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "ambiguous_observed_event",
+      "recording": "synthetic_90_80",
+      "question": "Check wrist movement at an event.",
+      "expected_tools": [
+        "heart"
+      ],
+      "expected_args": null,
+      "expected_status": "clarify",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "expected_goal": "motion",
+      "passed": true,
+      "run": {
+        "status": "clarify",
+        "steps": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  200
+                ],
+                "valid_s": 200,
+                "total_s": 200,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 67.5,
+                "median": 60.0,
+                "sd": 11.779219,
+                "min": 60,
+                "max": 90
+              },
+              "last_vs_first_minute_bpm": 15,
+              "events": [
+                {
+                  "id": 1,
+                  "window_s": [
+                    120,
+                    150
+                  ],
+                  "peak_bpm": 90,
+                  "mean_bpm": 90,
+                  "peak_above_baseline_bpm": 30.0
+                },
+                {
+                  "id": 2,
+                  "window_s": [
+                    170,
+                    200
+                  ],
+                  "peak_bpm": 80,
+                  "mean_bpm": 80,
+                  "peak_above_baseline_bpm": 20.0
+                }
+              ],
+              "event_count": 2,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 60,
+                "median": 60.0,
+                "sd": 0.0,
+                "min": 60,
+                "max": 60
+              },
+              "threshold_bpm": 70.0,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "prerequisite"
+          }
+        ],
+        "shown": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  200
+                ],
+                "valid_s": 200,
+                "total_s": 200,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 67.5,
+                "median": 60.0,
+                "sd": 11.779219,
+                "min": 60,
+                "max": 90
+              },
+              "last_vs_first_minute_bpm": 15,
+              "events": [
+                {
+                  "id": 1,
+                  "window_s": [
+                    120,
+                    150
+                  ],
+                  "peak_bpm": 90,
+                  "mean_bpm": 90,
+                  "peak_above_baseline_bpm": 30.0
+                },
+                {
+                  "id": 2,
+                  "window_s": [
+                    170,
+                    200
+                  ],
+                  "peak_bpm": 80,
+                  "mean_bpm": 80,
+                  "peak_above_baseline_bpm": 20.0
+                }
+              ],
+              "event_count": 2,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 60,
+                "median": 60.0,
+                "sd": 0.0,
+                "min": 60,
+                "max": 60
+              },
+              "threshold_bpm": 70.0,
+              "minimum_duration_s": 20
+            },
+            "selected_by": "prerequisite"
+          }
+        ],
+        "message": "Which observed event should I use?",
+        "errors": [],
+        "model_calls": 1,
+        "elapsed_s": 0.146,
+        "goal": "motion",
+        "stop_reason": "unresolved_event",
+        "safeguards": [
+          "unresolved_event"
+        ]
+      },
+      "displayed": "Which observed event should I use?\nHeart rate, 00:00 to 03:20: mean 67.5, median 60.0, SD 11.8 bpm (200/200 valid seconds).\n  Range 60.0 to 90.0 bpm.\n  Last vs. first minute mean: +15.0 bpm.\n  Baseline median 60.0 bpm (120/120 valid seconds). Event rule: at least 20 s at or above 70.0 bpm.\n  Event 1: 02:00 to 02:30, mean 90.0, peak 90.0 bpm (+30.0 bpm vs. baseline).\n  Event 2: 02:50 to 03:20, mean 80.0, peak 80.0 bpm (+20.0 bpm vs. baseline).",
+      "responses": [
+        {
+          "content": "motion",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 1,
+              "prompt_tokens": 213,
+              "total_tokens": 214,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 3,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 7.692011845698242,
+              "ttft_ms": 116,
+              "decode_token_per_second": 7.692011845698242
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-622259b2-4b9b-4a80-a186-53f8a3e34435",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -7,6 +7,7 @@ from urllib.parse import urlparse
 
 import httpx
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
+from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.tools import StructuredTool
 from langchain_openai import ChatOpenAI
 from langsmith import tracing_context
@@ -15,7 +16,9 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from . import analysis as analytics
 from .data import Recording
-from .references import BASELINE_REFERENCE, EVENT_ID, EVENT_REFERENCE, TOP_EVENT, explicit_windows
+from .references import (
+    BASELINE_REFERENCE, EVENT_ID, EVENT_REFERENCE, TIME_ORDER_REFERENCE, TOP_EVENT, explicit_windows,
+)
 
 DEFAULT_MODEL = "qwen2.5-0.5b-instruct-q4_k_m"
 DEFAULT_URL = "http://127.0.0.1:8083/mimik-ai/openai/v1"
@@ -36,6 +39,18 @@ ROUTE_EXAMPLES = (
     ("Compare minutes 2–3 and 4–5.", "compare"),
     ("Does this indicate heart disease?", "unsupported"),
 )
+
+EVENT_CHOICE_PROMPT = ChatPromptTemplate.from_messages([
+    ("system", "Match a requested heart-rate event to a candidate. Reply with one event ID or clarify. "
+               "If the request gives no reference, reply clarify."),
+    ("human", "Request: What was movement like at the earlier event?\nEarlier event: 3\nLater event: 2"),
+    ("ai", "3"),
+    ("human", "Request: Check wrist motion at the later event.\nEarlier event: 1\nLater event: 3"),
+    ("ai", "3"),
+    ("human", "Request: Check movement at an event.\nEarlier event: 1\nLater event: 2"),
+    ("ai", "clarify"),
+    ("human", "Request: {question}\nEarlier event: {earlier}\nLater event: {later}"),
+])
 
 
 class StrictModel(BaseModel):
@@ -239,15 +254,20 @@ class Agent:
             elif len(events) == 1 or TOP_EVENT.search(question):
                 event = events[0]["id"]
             else:
-                # When more than one observed event fits the scope, the model
-                # can resolve the reference or ask for clarification.
-                labels = {str(item["id"]): item["id"] for item in events}
-                labels["clarify"] = None
-                event = choose([
-                    SystemMessage("Select the event requested by the user. Reply with one observed ID, "
-                                  "or clarify if the reference is ambiguous."),
-                    HumanMessage(f"Question: {question}\nObserved events: {json.dumps(events)}"),
-                ], labels)
+                event = None
+                references = TIME_ORDER_REFERENCE.findall(question.lower())
+                if len(events) == 2 and len(references) == 1:
+                    earlier, later = sorted(events, key=lambda item: item["window_s"][0])
+                    ids = (earlier["id"], later["id"])
+                    labels = {str(event_id): event_id for event_id in ids}
+                    labels["clarify"] = None
+                    event = choose(EVENT_CHOICE_PROMPT.format_messages(
+                        question=question, earlier=ids[0], later=ids[1],
+                    ), labels)
+                    expected_id = ids[0] if references[0] == "earlier" else ids[1]
+                    if event is not None and event != expected_id:
+                        safeguards.append("event_choice_conflicts_with_reference")
+                        event = None
             if event not in {item["id"] for item in events}:
                 safeguards.append("unresolved_event")
                 return result("clarify", "unresolved_event", "Which observed event should I use?",

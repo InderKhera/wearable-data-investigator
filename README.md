@@ -1,6 +1,6 @@
 # Wearable-Data Investigation Agent
 
-A local LangChain agent for investigating heart rate, wrist movement, and signal quality in real wearable recordings. A model running in **mimOE Studio** selects an analysis goal from the user's request. Python resolves the inputs, runs the tools, and displays the evidence.
+A bounded AI agent for investigating heart rate, wrist movement, and signal quality in real wearable recordings. A model running in **mimOE Studio** selects an analysis goal from the user's request. Python resolves the inputs, runs the tools, and displays the evidence.
 
 ![Heart rate and wrist acceleration for the rising excerpt. Shading marks the reference window and detected event.](docs/rising-recording.png)
 
@@ -11,10 +11,11 @@ The figure uses an attributed PhysioNet recording. See [data provenance and lice
 Use Python 3.11 or newer and [mimOE Studio](https://developer.mimik.com/mimOE-studio-early-access-download-v2). Connect Studio to the local runtime and load **Qwen2.5-0.5B-Instruct Q4_K_M**. In Model View, open **API** to confirm the model ID and token. The tested ID is `qwen2.5-0.5b-instruct-q4_k_m`. Keep only the model you are testing loaded.
 
 ```sh
+python3 --version  # Use a Python 3.11+ interpreter.
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
-cp .env.example .env
+test -f .env || cp .env.example .env
 # Edit .env to match the Studio API panel, then load it.
 source .env
 python -m wearable.evaluate --smoke
@@ -56,7 +57,7 @@ flowchart LR
     T -->|Evidence satisfies the goal| R[Render tool results]
 ```
 
-Qwen chooses a goal such as signal quality, heart-rate events, wrist movement, or comparison. Python extracts literal elapsed-time windows and validates them. If a selected goal needs an event, the controller reuses the latest search for that recording or runs a prerequisite search. An empty search ends the investigation with the available evidence. When several observed events could match a reference, the model can choose an observed ID or ask for clarification.
+Qwen chooses a goal such as signal quality, heart-rate events, wrist movement, or comparison. Python extracts literal elapsed-time windows and validates them. If a selected goal needs an event, the controller reuses the latest search for that recording or runs a prerequisite search. An empty search ends the investigation with the available evidence. With two observed events and an explicit earlier/later reference, Qwen receives both IDs labeled by time order and chooses one. Python checks the choice against the observed times and asks for clarification if the reference is ambiguous or the choice conflicts with it.
 
 Each turn allows at most two tool executions and blocks identical calls. The controller ends the turn when the requested analysis has run or when a required reference is unavailable. The CLI labels steps as **model goal** or **prerequisite** and renders values and limitations from actual tool results.
 
@@ -67,7 +68,7 @@ Each turn allows at most two tool executions and blocks identical calls. The con
 | `analyze_activity_context` | Compare wrist-motion variability before, during, and after a supplied window or observed event. |
 | `compare_intervals` | Compare HR and wrist-motion statistics in two explicit elapsed windows or against the baseline. |
 
-The model replies with a short allowlisted label through ordinary Chat Completions. LangChain provides the model client and structured tools. Pydantic checks the arguments before execution. For an explicit window, use numeric seconds, numeric minutes, or MM:SS ranges. For a comparison against the start of the excerpt, a phrase like “first two minutes” also works.
+LangChain's `ChatOpenAI` sends ordinary Chat Completions to mimOE. Chat messages carry the goal prompt and examples, and `ChatPromptTemplate` formats the event choices. The controller calls LangChain `StructuredTool.invoke` with arguments checked by Pydantic. Keeping argument resolution and stopping in Python reduced the number of decisions the local model had to make on each turn. For an explicit window, use numeric seconds, numeric minutes, or MM:SS ranges. For a comparison against the start of the excerpt, a phrase like “first two minutes” also works.
 
 ## How to interpret the data
 
@@ -79,7 +80,7 @@ See [data provenance](data/README.md) for sample selection, source hashes, redis
 
 ## Verified results and tests
 
-The bounded controller passed **11/11 original live cases** with Qwen2.5 0.5B and all four guided CLI prompts. The same movement request succeeded three times per recording on `rising` and `steady`, with different tool traces based on the event evidence. Two of three additional paraphrases passed. Qwen declined “Did either channel miss any samples?” as unsupported. See the [evaluation notes](docs/evaluation.md) and [recorded CLI walkthrough](docs/live-qwen-0.5b-bounded-cli.txt).
+The bounded controller passed **11/11 original live cases** with Qwen2.5 0.5B and all four guided CLI prompts. The same movement request succeeded three times per recording on `rising` and `steady`. Python used the event result to determine whether to run the requested follow-up. In four separate live tests with synthetic recordings, Qwen selected the correct earlier or later observed event ID, including when swapping the peaks swapped the IDs. Two of three additional paraphrases passed. Qwen declined “Did either channel miss any samples?” as unsupported. See the [evaluation notes](docs/evaluation.md) and [recorded CLI walkthrough](docs/live-qwen-0.5b-review-cli.txt).
 
 ```sh
 python -m pip install -r requirements-dev.txt
@@ -88,6 +89,6 @@ mkdir -p .source-data
 python -m wearable.evaluate --output .source-data/live-evaluation.json
 ```
 
-Use `--extended` to repeat the paired demo and try three additional phrasings. It returns a nonzero exit code if any additional case fails. The checks cover a small collection of prompts and recordings. The model can still misclassify unfamiliar phrasings.
+Use `--extended` to repeat the paired demo, try three additional phrasings, and run the synthetic event-choice checks. It returns a nonzero exit code if any additional case fails. The checks cover a small collection of prompts and recordings. The model can still misclassify unfamiliar phrasings.
 
 AI assistance supported implementation and documentation. The repository records tests and measured outcomes separately from planned behavior.
