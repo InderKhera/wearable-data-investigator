@@ -8,7 +8,7 @@ The figure uses an attributed PhysioNet recording. See [data provenance and lice
 
 ## Run locally
 
-Use Python 3.11 or newer and [mimOE Studio](https://developer.mimik.com/mimOE-studio-early-access-download-v2). In Studio, connect to the local runtime, select and load the local model in Model View, and open **API** to get its model ID, base URL, and token. Use a model that can pass the action evaluation below. The bundled SmolLM2 360M Q2 model served live chat on the development Mac, but failed the structured action evaluation.
+Use Python 3.11 or newer and [mimOE Studio](https://developer.mimik.com/mimOE-studio-early-access-download-v2). In Studio, connect to the local runtime, select and load the local model in Model View, and open **API** to get its model ID, base URL, and token. Use a model that can pass the action evaluation below. SmolLM2 360M Q2 and Qwen2.5 0.5B Q4 both served live chat on the development Mac. Neither completed the live agent suite reliably. See the [model compatibility results](docs/evaluation.md) before using the interview demo.
 
 ```sh
 python3 -m venv .venv

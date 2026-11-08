@@ -1,0 +1,56 @@
+WEARABLE-DATA INVESTIGATION AGENT
+Powered by mimOE + LangChain
+
+Investigate recorded heart rate, wrist movement and sensor coverage in real research excerpts.
+
+  1. Steadier cycling excerpt [steady] — Six minutes with a comparatively narrow heart-rate range.
+  2. Rising heart rate [rising] — Sixteen minutes from a cycling session, with a sustained rise and changing wrist motion.
+  3. Different sensor start times [offset] — Fifteen minutes with an initial heart-rate coverage gap and changing wrist movement.
+Choose a recording (q to quit):
+Rising heart rate | 16:00 | Sixteen minutes from a cycling session, with a sustained rise and changing wrist motion.
+  1. Check this wearable recording for missing measurements or other data-quality problems.
+  2. Find the most significant periods of elevated heart rate and tell me when they occurred.
+  3. Investigate the largest heart-rate increase. Was it accompanied by increased wrist movement?
+  4. Compare the largest heart-rate elevation with the first two minutes. How did heart rate and movement differ?
+
+Example number or question (r = recordings, q = quit): Check this wearable recording for missing measurements or other data-quality problems.
+Which elapsed time window or detected event should I use?
+
+Example number or question (r = recordings, q = quit): Find the most significant periods of elevated heart rate and tell me when they occurred.
+  → find_heart_rate_events {}
+  → analyze_activity_context {"event":1}
+The local model failed to produce a valid next action after one repair.
+Heart rate, 00:00 to 16:00: mean 89.7, median 89.3, SD 25.3 bpm (960/960 valid seconds).
+  Range 53.6 to 128.3 bpm.
+  Last vs. first minute mean: +53.5 bpm.
+  Baseline median 70.3 bpm (120/120 valid seconds). Event rule: at least 20 s at or above 80.3 bpm.
+  Event 1: 07:45 to 16:00, mean 113.0, peak 128.3 bpm (+57.9 bpm vs. baseline).
+Wrist movement around the selected interval
+  Before (00:00 to 07:45)
+    Heart rate: mean 65.0, median 64.2, SD 6.3 bpm (465/465 valid seconds)
+    Wrist movement: mean 0.0497, median 0.0450, SD 0.0268 g RMS (465/465 valid seconds)
+  During (07:45 to 16:00)
+    Heart rate: mean 113.0, median 113.2, SD 9.2 bpm (495/495 valid seconds)
+    Wrist movement: mean 0.0865, median 0.0790, SD 0.0427 g RMS (495/495 valid seconds)
+  After: outside excerpt.
+  Movement during the window was higher than before (+0.0368 g RMS).
+  Wrist acceleration measures local motion. Timing alone cannot establish a cause.
+
+Example number or question (r = recordings, q = quit): Investigate the largest heart-rate increase. Was it accompanied by increased wrist movement?
+  → analyze_activity_context {"event":1}
+The local model failed to produce a valid next action after one repair.
+Wrist movement around the selected interval
+  Before (00:00 to 07:45)
+    Heart rate: mean 65.0, median 64.2, SD 6.3 bpm (465/465 valid seconds)
+    Wrist movement: mean 0.0497, median 0.0450, SD 0.0268 g RMS (465/465 valid seconds)
+  During (07:45 to 16:00)
+    Heart rate: mean 113.0, median 113.2, SD 9.2 bpm (495/495 valid seconds)
+    Wrist movement: mean 0.0865, median 0.0790, SD 0.0427 g RMS (495/495 valid seconds)
+  After: outside excerpt.
+  Movement during the window was higher than before (+0.0368 g RMS).
+  Wrist acceleration measures local motion. Timing alone cannot establish a cause.
+
+Example number or question (r = recordings, q = quit): Compare the largest heart-rate elevation with the first two minutes. How did heart rate and movement differ?
+The local model failed to produce a valid next action after one repair.
+
+Example number or question (r = recordings, q = quit):

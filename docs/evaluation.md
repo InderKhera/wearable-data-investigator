@@ -39,3 +39,22 @@ I shortened the instructions, supported a flat JSON action alongside the origina
 The smoke test still succeeded. The [revised live report](live-smollm2-revised.json) records **0 of 11 cases passed**, 22 invalid actions, and four tool executions across three cases. The revised model used a copied example window for a question with unspecified intervals, supplied one comparison in minutes instead of seconds, and sometimes answered in prose without evidence. Neither recording in the paired motion question reached the heart tool. The parser caught malformed outputs, and the comparison tool exposed semantically wrong but well-formed arguments. These failures persisted after the wire-format and prompt fixes.
 
 The observed completion maximum fell from 2,048 to 96 tokens. Revised cases took 0.36–1.20 seconds each, with a median of 0.73 seconds. These timings describe this failed run and do not establish the latency of a successful investigation.
+
+## Qwen2.5 0.5B live compatibility
+
+mimOE listed `qwen2.5-0.5b-instruct-q4_k_m` as the sole loaded model at `http://localhost:8083/mimik-ai/openai/v1`. The LangChain smoke test passed and the completion reported that exact model ID.
+
+| Live run, same 11 cases | Cases passed | Rejected actions | Tools executed | Median case time |
+|---|---:|---:|---:|---:|
+| [Existing controller](live-qwen-0.5b-initial.json) | 0 | 17 | 11 | 0.42 s |
+| [Few-shot JSON prompt with an observation-aware action menu](live-qwen-0.5b-menu.json) | 2 | 16 | 3 | 0.81 s |
+
+The two passes in the prompt trial were sensor quality on `offset` and the standalone heart search that sets up a follow-up. The follow-up itself failed. Case times ranged from 0.11 to 0.75 seconds for the existing controller and 0.14 to 1.28 seconds for the trial. These include failed turns. Memory use was not benchmarked.
+
+With the existing controller, both recordings initially produced an event reference before searching for events. After repair, `rising` ran heart search and movement analysis using returned event ID 1, then repeated the movement call instead of finishing. `steady` ran heart search and tried to use event ID 1 despite an empty result. The controller blocked the reference. The condition therefore worked at the tool boundary, while model-directed stopping remained unreliable. The comparison cases also exposed invented windows and minutes passed as seconds.
+
+I also tried compact question-and-evidence text, a short command format, and native function calls through LangChain. This runtime returned native tool calls. The native trials still selected unrequested tools, invented windows, and sometimes ended the investigation before gathering movement evidence. For example, one prose reply claimed increased movement after only the heart-rate tool ran. The application renders measurements directly from tool results, so it did not display that claim as evidence. The experiments did not replace the existing controller.
+
+The [interactive CLI transcript](live-qwen-0.5b-cli.txt) shows all four guided questions entered consecutively on `rising`. The quality question asked for clarification. The event and movement questions displayed real computed evidence before reporting a stopping failure. The interval comparison failed before any tool ran. The transcript is a partial live demonstration, and the model did not qualify for the repeated paired acceptance test.
+
+The 0.5B model passed the connectivity check and sometimes chose a valid tool, but it cannot yet be recommended for the submission demo. A separate evaluation of the already-downloaded Qwen2.5 1.5B Q4 model, loaded by itself, would be the next comparison if the hardware can run it comfortably.

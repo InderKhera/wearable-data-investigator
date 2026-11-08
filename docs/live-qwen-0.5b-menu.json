@@ -1,0 +1,1288 @@
+{
+  "model": "qwen2.5-0.5b-instruct-q4_k_m",
+  "cases": [
+    {
+      "name": "coverage",
+      "recording": "offset",
+      "question": "Check this wearable recording for missing measurements or other data-quality problems.",
+      "expected_tools": [
+        "quality"
+      ],
+      "expected_args": null,
+      "expected_status": "ok",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "passed": true,
+      "run": {
+        "status": "ok",
+        "steps": [
+          {
+            "action": "quality",
+            "args": {},
+            "result": {
+              "duration_s": 900,
+              "signals": {
+                "heart_rate": {
+                  "available": true,
+                  "sample_rate_hz": 1,
+                  "expected_e4_rate_hz": 1,
+                  "unexpected_rate": false,
+                  "missing_s": 10,
+                  "partial_bins": 0,
+                  "coverage": 0.9889,
+                  "gap_count": 1,
+                  "largest_gaps_s": [
+                    [
+                      0,
+                      10
+                    ]
+                  ]
+                },
+                "accelerometer": {
+                  "available": true,
+                  "sample_rate_hz": 32,
+                  "expected_e4_rate_hz": 32,
+                  "unexpected_rate": false,
+                  "missing_s": 0,
+                  "partial_bins": 0,
+                  "coverage": 1.0,
+                  "gap_count": 0,
+                  "largest_gaps_s": []
+                }
+              },
+              "issue_count": 0,
+              "examples": []
+            }
+          }
+        ],
+        "shown": [
+          {
+            "action": "quality",
+            "args": {},
+            "result": {
+              "duration_s": 900,
+              "signals": {
+                "heart_rate": {
+                  "available": true,
+                  "sample_rate_hz": 1,
+                  "expected_e4_rate_hz": 1,
+                  "unexpected_rate": false,
+                  "missing_s": 10,
+                  "partial_bins": 0,
+                  "coverage": 0.9889,
+                  "gap_count": 1,
+                  "largest_gaps_s": [
+                    [
+                      0,
+                      10
+                    ]
+                  ]
+                },
+                "accelerometer": {
+                  "available": true,
+                  "sample_rate_hz": 32,
+                  "expected_e4_rate_hz": 32,
+                  "unexpected_rate": false,
+                  "missing_s": 0,
+                  "partial_bins": 0,
+                  "coverage": 1.0,
+                  "gap_count": 0,
+                  "largest_gaps_s": []
+                }
+              },
+              "issue_count": 0,
+              "examples": []
+            }
+          }
+        ],
+        "message": "",
+        "errors": [],
+        "model_calls": 2,
+        "elapsed_s": 0.55
+      },
+      "displayed": "Signal quality\n  Heart rate: 1 Hz, 98.9% usable coverage, 10 unusable seconds across 1 gaps, 0 partial sample bins.\n    Gap: 00:00 to 00:10.\n  Accelerometer: 32 Hz, 100.0% usable coverage, 0 unusable seconds across 0 gaps, 0 partial sample bins.\n  Tools exclude unusable seconds and withhold statistics with low coverage.",
+      "responses": [
+        {
+          "content": "{\"action\":\"quality\"}",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 5,
+              "prompt_tokens": 464,
+              "total_tokens": 469,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 3,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 13.435984253026456,
+              "ttft_ms": 295,
+              "decode_token_per_second": 51.85713359694042
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-c828ec78-5d09-4aa2-ad0b-1d73aa6b9618",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        },
+        {
+          "content": "{\"action\":\"finish\"}",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 5,
+              "prompt_tokens": 515,
+              "total_tokens": 520,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 388,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 37.50515695908188,
+              "ttft_ms": 79,
+              "decode_token_per_second": 73.64448126668509
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-b23561db-55a4-4301-b962-4e82fca5ca1a",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "elevations",
+      "recording": "rising",
+      "question": "Find the most significant periods of elevated heart rate and tell me when they occurred.",
+      "expected_tools": [
+        "heart"
+      ],
+      "expected_args": null,
+      "expected_status": "ok",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "passed": false,
+      "run": {
+        "status": "error",
+        "steps": [],
+        "shown": [],
+        "message": "The local model failed to produce a valid next action after one repair.",
+        "errors": [
+          "Expected one complete JSON action.",
+          "last_error: Extra inputs are not permitted"
+        ],
+        "model_calls": 2,
+        "elapsed_s": 1.277
+      },
+      "displayed": "The local model failed to produce a valid next action after one repair.",
+      "responses": [
+        {
+          "content": "{\"action\":\"compare\",\"a\":[120,180],\"b\":[240,300],\"results\":[{\"action\":\"heart\",\"id\":\"120\",\"start\":\"120\",\"end\":\"180\",\"duration_s\":60,\"heart_rate\":\"180\"},{\"action\":\"heart\",\"id\":\"240\",\"start\":\"240\",\"end\":\"300\",\"duration_s\":60,\"heart_rate\":\"240",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 96,
+              "prompt_tokens": 467,
+              "total_tokens": 563,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 388,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 104.40513542759885,
+              "ttft_ms": 66,
+              "decode_token_per_second": 111.30703753390472
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-5aea972c-b741-4ba9-9fd5-2933ccc90275",
+            "finish_reason": "length",
+            "logprobs": null
+          }
+        },
+        {
+          "content": "{\"action\":\"compare\",\"a\":[120,180],\"b\":[240,300],\"last_error\":\"Expected one complete JSON action.\"}",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 35,
+              "prompt_tokens": 473,
+              "total_tokens": 508,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 460,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 104.17968912780765,
+              "ttft_ms": 37,
+              "decode_token_per_second": 113.72834980164438
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-3a569a6e-f782-423f-83ec-7e800b2459ce",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "motion_at_rise",
+      "recording": "rising",
+      "question": "Investigate the largest heart-rate increase. Was it accompanied by increased wrist movement?",
+      "expected_tools": [
+        "heart",
+        "motion"
+      ],
+      "expected_args": {
+        "event": 1
+      },
+      "expected_status": "ok",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "passed": false,
+      "run": {
+        "status": "error",
+        "steps": [],
+        "shown": [],
+        "message": "The local model failed to produce a valid next action after one repair.",
+        "errors": [
+          "Expected one complete JSON action.",
+          "Expected one complete JSON action."
+        ],
+        "model_calls": 2,
+        "elapsed_s": 1.016
+      },
+      "displayed": "The local model failed to produce a valid next action after one repair.",
+      "responses": [
+        {
+          "content": "\"Compare minutes 2\u20133 and 4\u20135\" | none | {\"action\":\"compare\",\"a\":[120,180],\"b\":[240,300]}",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 41,
+              "prompt_tokens": 467,
+              "total_tokens": 508,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 429,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 74.72234270946859,
+              "ttft_ms": 48,
+              "decode_token_per_second": 79.88847568793965
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-b67c6aaa-9c14-46c2-89b2-c7f19781d006",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        },
+        {
+          "content": "\"Compare minutes 2\u20133 and 4\u20135\" | none | {\"action\":\"compare\",\"a\":[120,180],\"b\":[240,300]}",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 41,
+              "prompt_tokens": 473,
+              "total_tokens": 514,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 460,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 92.9918189880222,
+              "ttft_ms": 37,
+              "decode_token_per_second": 99.03465965501276
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-81cff8da-2a2a-479b-875b-f845fc18ebe6",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "no_rise_to_check",
+      "recording": "steady",
+      "question": "Investigate the largest heart-rate increase. Was it accompanied by increased wrist movement?",
+      "expected_tools": [
+        "heart"
+      ],
+      "expected_args": null,
+      "expected_status": "ok",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "passed": false,
+      "run": {
+        "status": "error",
+        "steps": [],
+        "shown": [],
+        "message": "The local model failed to produce a valid next action after one repair.",
+        "errors": [
+          "Expected one complete JSON action.",
+          "Expected one complete JSON action."
+        ],
+        "model_calls": 2,
+        "elapsed_s": 0.809
+      },
+      "displayed": "The local model failed to produce a valid next action after one repair.",
+      "responses": [
+        {
+          "content": "\"Compare minutes 2\u20133 and 4\u20135\" | none | {\"action\":\"compare\",\"a\":[120,180],\"b\":[240,300]}",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 41,
+              "prompt_tokens": 467,
+              "total_tokens": 508,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 421,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 103.7417892169266,
+              "ttft_ms": 48,
+              "decode_token_per_second": 115.20339158784834
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-30523335-7116-4072-9189-ac782cf001ad",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        },
+        {
+          "content": "\"Compare minutes 2\u20133 and 4\u20135\" | none | {\"action\":\"compare\",\"a\":[120,180],\"b\":[240,300]}",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 41,
+              "prompt_tokens": 473,
+              "total_tokens": 514,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 460,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 103.62589535301046,
+              "ttft_ms": 35,
+              "decode_token_per_second": 110.90962529183095
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-8627edde-775b-4c50-a424-b17dc6f16fe3",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "event_vs_baseline",
+      "recording": "rising",
+      "question": "Compare the largest heart-rate elevation with the first two minutes. How did heart rate and movement differ?",
+      "expected_tools": [
+        "heart",
+        "compare"
+      ],
+      "expected_args": {
+        "event": 1
+      },
+      "expected_status": "ok",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "passed": false,
+      "run": {
+        "status": "error",
+        "steps": [],
+        "shown": [],
+        "message": "The local model failed to produce a valid next action after one repair.",
+        "errors": [
+          "Expected one complete JSON action.",
+          "Expected one complete JSON action."
+        ],
+        "model_calls": 2,
+        "elapsed_s": 0.828
+      },
+      "displayed": "The local model failed to produce a valid next action after one repair.",
+      "responses": [
+        {
+          "content": "\"Compare minutes 2\u20133 and 4\u20135\" | none | {\"action\":\"compare\",\"a\":[120,180],\"b\":[240,300]}",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 41,
+              "prompt_tokens": 471,
+              "total_tokens": 512,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 421,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 96.96889427079391,
+              "ttft_ms": 49,
+              "decode_token_per_second": 107.00451559055792
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-d7386fbf-47ec-41fa-b93c-c141826fb364",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        },
+        {
+          "content": "\"Compare minutes 2\u20133 and 4\u20135\" | none | {\"action\":\"compare\",\"a\":[120,180],\"b\":[240,300]}",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 41,
+              "prompt_tokens": 477,
+              "total_tokens": 518,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 464,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 105.00058902769455,
+              "ttft_ms": 36,
+              "decode_token_per_second": 112.84325507653594
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-f34d28a7-77ee-4ffe-ba01-102db2e713b0",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "explicit_windows",
+      "recording": "offset",
+      "question": "Contrast minute 0 to 1 with minute 1 to 2 for pulse and motion.",
+      "expected_tools": [
+        "compare"
+      ],
+      "expected_args": {
+        "a": [
+          0,
+          60
+        ],
+        "b": [
+          60,
+          120
+        ]
+      },
+      "expected_status": "ok",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "passed": false,
+      "run": {
+        "status": "error",
+        "steps": [],
+        "shown": [],
+        "message": "The local model failed to produce a valid next action after one repair.",
+        "errors": [
+          "Expected one complete JSON action.",
+          "Expected one complete JSON action."
+        ],
+        "model_calls": 2,
+        "elapsed_s": 0.783
+      },
+      "displayed": "The local model failed to produce a valid next action after one repair.",
+      "responses": [
+        {
+          "content": "\"Compare minutes 0\u20131 and 1\u20132\" | none | {\"action\":\"compare\",\"a\":[0,1],\"b\":[1,2],\"previous_heart\":\"heart found zero events\"}",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 42,
+              "prompt_tokens": 471,
+              "total_tokens": 513,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 422,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 103.70421582328801,
+              "ttft_ms": 50,
+              "decode_token_per_second": 115.49360841469529
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-0b26efc9-8066-47aa-8035-78289a20be41",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        },
+        {
+          "content": "\"Compare minutes 0\u20131 and 1\u20132\" | none | {\"action\":\"compare\",\"a\":[0,1],\"b\":[1,2],\"previous_heart\":null}",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 39,
+              "prompt_tokens": 477,
+              "total_tokens": 516,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 464,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 106.73672975081078,
+              "ttft_ms": 36,
+              "decode_token_per_second": 115.36651638659926
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-4b1e9286-3fdd-4408-9fc8-fd6a0fec2425",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "quality_paraphrase",
+      "recording": "offset",
+      "question": "Do both streams cover the full recording?",
+      "expected_tools": [
+        "quality"
+      ],
+      "expected_args": null,
+      "expected_status": "ok",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "passed": false,
+      "run": {
+        "status": "error",
+        "steps": [
+          {
+            "action": "compare",
+            "args": {
+              "a": [
+                120,
+                180
+              ],
+              "b": [
+                240,
+                300
+              ]
+            },
+            "result": {
+              "a": {
+                "window_s": [
+                  120,
+                  180
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    120,
+                    180
+                  ],
+                  "valid_s": 60,
+                  "total_s": 60,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 71.679833,
+                  "median": 71.38,
+                  "sd": 0.988112,
+                  "min": 70.25,
+                  "max": 74.1
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    120,
+                    180
+                  ],
+                  "valid_s": 60,
+                  "total_s": 60,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.052076,
+                  "median": 0.048592,
+                  "sd": 0.017201,
+                  "min": 0.034592,
+                  "max": 0.131011
+                }
+              },
+              "b": {
+                "window_s": [
+                  240,
+                  300
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    240,
+                    300
+                  ],
+                  "valid_s": 60,
+                  "total_s": 60,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 89.447,
+                  "median": 85.2,
+                  "sd": 9.665517,
+                  "min": 80.05,
+                  "max": 111.33
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    240,
+                    300
+                  ],
+                  "valid_s": 60,
+                  "total_s": 60,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.222047,
+                  "median": 0.248288,
+                  "sd": 0.129005,
+                  "min": 0.032525,
+                  "max": 0.398733
+                }
+              },
+              "b_minus_a_bpm": 17.767167,
+              "b_minus_a_motion_g": 0.169971
+            }
+          }
+        ],
+        "shown": [
+          {
+            "action": "compare",
+            "args": {
+              "a": [
+                120,
+                180
+              ],
+              "b": [
+                240,
+                300
+              ]
+            },
+            "result": {
+              "a": {
+                "window_s": [
+                  120,
+                  180
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    120,
+                    180
+                  ],
+                  "valid_s": 60,
+                  "total_s": 60,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 71.679833,
+                  "median": 71.38,
+                  "sd": 0.988112,
+                  "min": 70.25,
+                  "max": 74.1
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    120,
+                    180
+                  ],
+                  "valid_s": 60,
+                  "total_s": 60,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.052076,
+                  "median": 0.048592,
+                  "sd": 0.017201,
+                  "min": 0.034592,
+                  "max": 0.131011
+                }
+              },
+              "b": {
+                "window_s": [
+                  240,
+                  300
+                ],
+                "heart_rate_bpm": {
+                  "window_s": [
+                    240,
+                    300
+                  ],
+                  "valid_s": 60,
+                  "total_s": 60,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 89.447,
+                  "median": 85.2,
+                  "sd": 9.665517,
+                  "min": 80.05,
+                  "max": 111.33
+                },
+                "wrist_motion_g": {
+                  "window_s": [
+                    240,
+                    300
+                  ],
+                  "valid_s": 60,
+                  "total_s": 60,
+                  "coverage": 1.0,
+                  "status": "ok",
+                  "mean": 0.222047,
+                  "median": 0.248288,
+                  "sd": 0.129005,
+                  "min": 0.032525,
+                  "max": 0.398733
+                }
+              },
+              "b_minus_a_bpm": 17.767167,
+              "b_minus_a_motion_g": 0.169971
+            }
+          }
+        ],
+        "message": "The local model failed to produce a valid next action after one repair.",
+        "errors": [
+          "Expected one complete JSON action.",
+          "Expected one complete JSON action."
+        ],
+        "model_calls": 3,
+        "elapsed_s": 1.127
+      },
+      "displayed": "The local model failed to produce a valid next action after one repair.\nInterval comparison (B minus A)\n  A (02:00 to 03:00)\n    Heart rate: mean 71.7, median 71.4, SD 1.0 bpm (60/60 valid seconds)\n    Wrist movement: mean 0.0521, median 0.0486, SD 0.0172 g RMS (60/60 valid seconds)\n  B (04:00 to 05:00)\n    Heart rate: mean 89.4, median 85.2, SD 9.7 bpm (60/60 valid seconds)\n    Wrist movement: mean 0.2220, median 0.2483, SD 0.1290 g RMS (60/60 valid seconds)\n  Mean heart rate: +17.8 bpm.\n  Mean wrist movement: +0.1700 g RMS.",
+      "responses": [
+        {
+          "content": "{\"action\":\"compare\",\"a\":[120,180],\"b\":[240,300]}",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 25,
+              "prompt_tokens": 459,
+              "total_tokens": 484,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 429,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 97.99041261802945,
+              "ttft_ms": 36,
+              "decode_token_per_second": 109.52552629297166
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-8906e616-00ea-4c9f-ace2-16570add907b",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        },
+        {
+          "content": "\"Compare minutes 2\u20133 and 4\u20135\" | none | {\"action\":\"compare\",\"a\":[120,180],\"b\":[240,300]}",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 41,
+              "prompt_tokens": 511,
+              "total_tokens": 552,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 388,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 95.0764321757198,
+              "ttft_ms": 77,
+              "decode_token_per_second": 112.92034598794011
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-61bed871-ff15-4474-8acc-9a41f3bfb4db",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        },
+        {
+          "content": "\"Compare minutes 2\u20133 and 4\u20135\" | none | {\"action\":\"compare\",\"a\":[120,180],\"b\":[240,300]}",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 41,
+              "prompt_tokens": 517,
+              "total_tokens": 558,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 504,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 98.78756336860772,
+              "ttft_ms": 37,
+              "decode_token_per_second": 105.81114826258093
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-1af1e3a0-6e94-44f6-b5ba-0bd4db4a7c9b",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "unsupported",
+      "recording": "rising",
+      "question": "Can you diagnose a heart condition from this?",
+      "expected_tools": [],
+      "expected_args": null,
+      "expected_status": "unsupported",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "passed": false,
+      "run": {
+        "status": "clarify",
+        "steps": [],
+        "shown": [],
+        "message": "Which elapsed time window or detected event should I use?",
+        "errors": [],
+        "model_calls": 1,
+        "elapsed_s": 0.144
+      },
+      "displayed": "Which elapsed time window or detected event should I use?",
+      "responses": [
+        {
+          "content": "{\"action\":\"clarify\"}",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 6,
+              "prompt_tokens": 460,
+              "total_tokens": 466,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 388,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 43.53536159745754,
+              "ttft_ms": 67,
+              "decode_token_per_second": 70.60252192208307
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-e1c13627-197a-4669-b8bf-0481d6541df4",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "ambiguous",
+      "recording": "rising",
+      "question": "Compare two time windows for me.",
+      "expected_tools": [],
+      "expected_args": null,
+      "expected_status": "clarify",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "passed": false,
+      "run": {
+        "status": "error",
+        "steps": [],
+        "shown": [],
+        "message": "The local model failed to produce a valid next action after one repair.",
+        "errors": [
+          "Expected one complete JSON action.",
+          "Expected one complete JSON action."
+        ],
+        "model_calls": 2,
+        "elapsed_s": 0.809
+      },
+      "displayed": "The local model failed to produce a valid next action after one repair.",
+      "responses": [
+        {
+          "content": "\"Compare minutes 2\u20133 and 4\u20135\" | none | {\"action\":\"compare\",\"a\":[120,180],\"b\":[240,300]}",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 41,
+              "prompt_tokens": 458,
+              "total_tokens": 499,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 429,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 103.88820615474276,
+              "ttft_ms": 35,
+              "decode_token_per_second": 111.21769473523239
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-36c6d7a7-f952-4933-8fe2-1aa613094048",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        },
+        {
+          "content": "\"Compare minutes 2\u20133 and 4\u20135\" | none | {\"action\":\"compare\",\"a\":[120,180],\"b\":[240,300]}",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 41,
+              "prompt_tokens": 464,
+              "total_tokens": 505,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 451,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 102.68354683997646,
+              "ttft_ms": 36,
+              "decode_token_per_second": 110.10639029962701
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-d1a8075a-e511-427a-8e4e-56d930bea648",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "followup_setup",
+      "recording": "rising",
+      "question": "Find sustained heart-rate elevations.",
+      "expected_tools": [
+        "heart"
+      ],
+      "expected_args": null,
+      "expected_status": "ok",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "passed": true,
+      "run": {
+        "status": "ok",
+        "steps": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  960
+                ],
+                "valid_s": 960,
+                "total_s": 960,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 89.71274,
+                "median": 89.345,
+                "sd": 25.25725,
+                "min": 53.6,
+                "max": 128.27
+              },
+              "last_vs_first_minute_bpm": 53.502,
+              "events": [
+                {
+                  "id": 1,
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "peak_bpm": 128.27,
+                  "mean_bpm": 112.962505,
+                  "peak_above_baseline_bpm": 57.94
+                }
+              ],
+              "event_count": 1,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 68.986917,
+                "median": 70.33,
+                "sd": 6.490537,
+                "min": 54.1,
+                "max": 83.0
+              },
+              "threshold_bpm": 80.33,
+              "minimum_duration_s": 20
+            }
+          }
+        ],
+        "shown": [
+          {
+            "action": "heart",
+            "args": {},
+            "result": {
+              "overall": {
+                "window_s": [
+                  0,
+                  960
+                ],
+                "valid_s": 960,
+                "total_s": 960,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 89.71274,
+                "median": 89.345,
+                "sd": 25.25725,
+                "min": 53.6,
+                "max": 128.27
+              },
+              "last_vs_first_minute_bpm": 53.502,
+              "events": [
+                {
+                  "id": 1,
+                  "window_s": [
+                    465,
+                    960
+                  ],
+                  "peak_bpm": 128.27,
+                  "mean_bpm": 112.962505,
+                  "peak_above_baseline_bpm": 57.94
+                }
+              ],
+              "event_count": 1,
+              "status": "ok",
+              "baseline": {
+                "window_s": [
+                  0,
+                  120
+                ],
+                "valid_s": 120,
+                "total_s": 120,
+                "coverage": 1.0,
+                "status": "ok",
+                "mean": 68.986917,
+                "median": 70.33,
+                "sd": 6.490537,
+                "min": 54.1,
+                "max": 83.0
+              },
+              "threshold_bpm": 80.33,
+              "minimum_duration_s": 20
+            }
+          }
+        ],
+        "message": "",
+        "errors": [],
+        "model_calls": 2,
+        "elapsed_s": 0.261
+      },
+      "displayed": "Heart rate, 00:00 to 16:00: mean 89.7, median 89.3, SD 25.3 bpm (960/960 valid seconds).\n  Range 53.6 to 128.3 bpm.\n  Last vs. first minute mean: +53.5 bpm.\n  Baseline median 70.3 bpm (120/120 valid seconds). Event rule: at least 20 s at or above 80.3 bpm.\n  Event 1: 07:45 to 16:00, mean 113.0, peak 128.3 bpm (+57.9 bpm vs. baseline).",
+      "responses": [
+        {
+          "content": "{\"action\":\"heart\"}",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 5,
+              "prompt_tokens": 458,
+              "total_tokens": 463,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 429,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 58.265551075582074,
+              "ttft_ms": 37,
+              "decode_token_per_second": 81.94370467488835
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-8b2d629c-53c7-46ed-b616-bceec937e134",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        },
+        {
+          "content": "{\"action\":\"finish\"}",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 5,
+              "prompt_tokens": 558,
+              "total_tokens": 563,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 388,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 31.705569400320858,
+              "ttft_ms": 107,
+              "decode_token_per_second": 78.89390741799963
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-82c4c41d-e4ed-4a9a-964d-447411c940e8",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "followup",
+      "recording": "rising",
+      "question": "How much wrist movement was recorded around that first event?",
+      "expected_tools": [
+        "motion"
+      ],
+      "expected_args": {
+        "event": 1
+      },
+      "expected_status": "ok",
+      "served_models": [
+        "qwen2.5-0.5b-instruct-q4_k_m"
+      ],
+      "passed": false,
+      "run": {
+        "status": "error",
+        "steps": [],
+        "shown": [],
+        "message": "The local model failed to produce a valid next action after one repair.",
+        "errors": [
+          "Expected one complete JSON action.",
+          "Expected one complete JSON action."
+        ],
+        "model_calls": 2,
+        "elapsed_s": 0.621
+      },
+      "displayed": "The local model failed to produce a valid next action after one repair.",
+      "responses": [
+        {
+          "content": "\"Check wrist activity at the main pulse rise\" | motion found event 2 | {\"action\":\"motion\",\"event\":2}",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 26,
+              "prompt_tokens": 543,
+              "total_tokens": 569,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 388,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 76.17418105430926,
+              "ttft_ms": 96,
+              "decode_token_per_second": 101.90646616909137
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-22cc787e-ca18-4fa6-93f3-53f8d72cac2b",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        },
+        {
+          "content": "\"Check wrist activity at the main pulse rise\" | motion found event 2 | {\"action\":\"motion\",\"event\":2}",
+          "metadata": {
+            "token_usage": {
+              "completion_tokens": 26,
+              "prompt_tokens": 549,
+              "total_tokens": 575,
+              "completion_tokens_details": null,
+              "prompt_tokens_details": {
+                "audio_tokens": null,
+                "cache_write_tokens": null,
+                "cached_tokens": 536,
+                "image_tokens": null,
+                "text_tokens": null
+              },
+              "token_per_second": 98.69457445556657,
+              "ttft_ms": 38,
+              "decode_token_per_second": 110.89474314559594
+            },
+            "model_provider": "openai",
+            "model_name": "qwen2.5-0.5b-instruct-q4_k_m",
+            "system_fingerprint": null,
+            "id": "chatcmpl-4c18ee5b-6a61-440b-834e-1ec8f8e62453",
+            "finish_reason": "stop",
+            "logprobs": null
+          }
+        }
+      ]
+    }
+  ]
+}
