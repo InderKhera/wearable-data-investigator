@@ -17,7 +17,10 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 test -f .env || cp .env.example .env
 # Edit .env to match the Studio API panel, then load it.
+# Edit .env to match the Studio API panel, then load it.
+set -a
 source .env
+set +a
 python -m wearable.evaluate --smoke
 python -m wearable.evaluate
 python -m wearable.cli
@@ -91,4 +94,4 @@ python -m wearable.evaluate --output .source-data/live-evaluation.json
 
 Use `--extended` to repeat the paired demo, try three additional phrasings, and run the synthetic event-choice checks. It returns a nonzero exit code if any additional case fails. The checks cover a small collection of prompts and recordings. The model can still misclassify unfamiliar phrasings.
 
-AI assistance supported implementation and documentation. The repository records tests and measured outcomes separately from planned behavior.
+
