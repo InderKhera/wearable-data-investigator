@@ -1,0 +1,282 @@
+{
+  "model": "SmolLM2-360M-Instruct-Q2_K",
+  "cases": [
+    {
+      "name": "coverage",
+      "recording": "offset",
+      "question": "Check this wearable recording for missing measurements or other data-quality problems.",
+      "expected_tools": [
+        "quality"
+      ],
+      "expected_args": null,
+      "expected_status": "ok",
+      "passed": false,
+      "run": {
+        "status": "error",
+        "steps": [],
+        "shown": [],
+        "message": "The local model failed to produce a valid next action after one repair.",
+        "errors": [
+          "Expected one complete JSON action.",
+          "Expected one complete JSON action."
+        ],
+        "model_calls": 2,
+        "elapsed_s": 27.113
+      },
+      "displayed": "The local model failed to produce a valid next action after one repair."
+    },
+    {
+      "name": "elevations",
+      "recording": "rising",
+      "question": "Find the most significant periods of elevated heart rate and tell me when they occurred.",
+      "expected_tools": [
+        "heart"
+      ],
+      "expected_args": null,
+      "expected_status": "ok",
+      "passed": false,
+      "run": {
+        "status": "error",
+        "steps": [],
+        "shown": [],
+        "message": "The local model failed to produce a valid next action after one repair.",
+        "errors": [
+          "event: Extra inputs are not permitted",
+          "event: Extra inputs are not permitted"
+        ],
+        "model_calls": 2,
+        "elapsed_s": 0.267
+      },
+      "displayed": "The local model failed to produce a valid next action after one repair."
+    },
+    {
+      "name": "motion_at_rise",
+      "recording": "rising",
+      "question": "Investigate the largest heart-rate increase. Was it accompanied by increased wrist movement?",
+      "expected_tools": [
+        "heart",
+        "motion"
+      ],
+      "expected_args": {
+        "event": 1
+      },
+      "expected_status": "ok",
+      "passed": false,
+      "run": {
+        "status": "error",
+        "steps": [],
+        "shown": [],
+        "message": "The local model failed to produce a valid next action after one repair.",
+        "errors": [
+          "event: Extra inputs are not permitted",
+          "event: Extra inputs are not permitted"
+        ],
+        "model_calls": 2,
+        "elapsed_s": 0.257
+      },
+      "displayed": "The local model failed to produce a valid next action after one repair."
+    },
+    {
+      "name": "no_rise_to_check",
+      "recording": "steady",
+      "question": "Investigate the largest heart-rate increase. Was it accompanied by increased wrist movement?",
+      "expected_tools": [
+        "heart"
+      ],
+      "expected_args": null,
+      "expected_status": "ok",
+      "passed": false,
+      "run": {
+        "status": "error",
+        "steps": [],
+        "shown": [],
+        "message": "The local model failed to produce a valid next action after one repair.",
+        "errors": [
+          "event: Extra inputs are not permitted",
+          "event: Extra inputs are not permitted"
+        ],
+        "model_calls": 2,
+        "elapsed_s": 0.255
+      },
+      "displayed": "The local model failed to produce a valid next action after one repair."
+    },
+    {
+      "name": "event_vs_baseline",
+      "recording": "rising",
+      "question": "Compare the largest heart-rate elevation with the first two minutes. How did heart rate and movement differ?",
+      "expected_tools": [
+        "heart",
+        "compare"
+      ],
+      "expected_args": {
+        "event": 1
+      },
+      "expected_status": "ok",
+      "passed": false,
+      "run": {
+        "status": "error",
+        "steps": [],
+        "shown": [],
+        "message": "The local model failed to produce a valid next action after one repair.",
+        "errors": [
+          "event: Extra inputs are not permitted",
+          "event: Extra inputs are not permitted"
+        ],
+        "model_calls": 2,
+        "elapsed_s": 0.255
+      },
+      "displayed": "The local model failed to produce a valid next action after one repair."
+    },
+    {
+      "name": "explicit_windows",
+      "recording": "offset",
+      "question": "Contrast minute 0 to 1 with minute 1 to 2 for pulse and motion.",
+      "expected_tools": [
+        "compare"
+      ],
+      "expected_args": {
+        "a": [
+          0,
+          60
+        ],
+        "b": [
+          60,
+          120
+        ]
+      },
+      "expected_status": "ok",
+      "passed": false,
+      "run": {
+        "status": "error",
+        "steps": [],
+        "shown": [],
+        "message": "The local model failed to produce a valid next action after one repair.",
+        "errors": [
+          "Expected one complete JSON action.",
+          "Expected one complete JSON action."
+        ],
+        "model_calls": 2,
+        "elapsed_s": 26.857
+      },
+      "displayed": "The local model failed to produce a valid next action after one repair."
+    },
+    {
+      "name": "quality_paraphrase",
+      "recording": "offset",
+      "question": "Do both streams cover the full recording?",
+      "expected_tools": [
+        "quality"
+      ],
+      "expected_args": null,
+      "expected_status": "ok",
+      "passed": false,
+      "run": {
+        "status": "error",
+        "steps": [],
+        "shown": [],
+        "message": "The local model failed to produce a valid next action after one repair.",
+        "errors": [
+          "Expected one complete JSON action.",
+          "Expected one complete JSON action."
+        ],
+        "model_calls": 2,
+        "elapsed_s": 27.036
+      },
+      "displayed": "The local model failed to produce a valid next action after one repair."
+    },
+    {
+      "name": "unsupported",
+      "recording": "rising",
+      "question": "Can you diagnose a heart condition from this?",
+      "expected_tools": [],
+      "expected_args": null,
+      "expected_status": "unsupported",
+      "passed": false,
+      "run": {
+        "status": "error",
+        "steps": [],
+        "shown": [],
+        "message": "The local model failed to produce a valid next action after one repair.",
+        "errors": [
+          "Expected one complete JSON action.",
+          "Expected one complete JSON action."
+        ],
+        "model_calls": 2,
+        "elapsed_s": 14.087
+      },
+      "displayed": "The local model failed to produce a valid next action after one repair."
+    },
+    {
+      "name": "ambiguous",
+      "recording": "rising",
+      "question": "Compare two time windows for me.",
+      "expected_tools": [],
+      "expected_args": null,
+      "expected_status": "clarify",
+      "passed": false,
+      "run": {
+        "status": "error",
+        "steps": [],
+        "shown": [],
+        "message": "The local model failed to produce a valid next action after one repair.",
+        "errors": [
+          "window_1: Extra inputs are not permitted",
+          "window_1: Extra inputs are not permitted"
+        ],
+        "model_calls": 2,
+        "elapsed_s": 0.582
+      },
+      "displayed": "The local model failed to produce a valid next action after one repair."
+    },
+    {
+      "name": "followup_setup",
+      "recording": "rising",
+      "question": "Find sustained heart-rate elevations.",
+      "expected_tools": [
+        "heart"
+      ],
+      "expected_args": null,
+      "expected_status": "ok",
+      "passed": false,
+      "run": {
+        "status": "error",
+        "steps": [],
+        "shown": [],
+        "message": "The local model failed to produce a valid next action after one repair.",
+        "errors": [
+          "Expected one complete JSON action.",
+          "Expected one complete JSON action."
+        ],
+        "model_calls": 2,
+        "elapsed_s": 27.67
+      },
+      "displayed": "The local model failed to produce a valid next action after one repair."
+    },
+    {
+      "name": "followup",
+      "recording": "rising",
+      "question": "How much wrist movement was recorded around that first event?",
+      "expected_tools": [
+        "motion"
+      ],
+      "expected_args": {
+        "event": 1
+      },
+      "expected_status": "ok",
+      "passed": false,
+      "run": {
+        "status": "error",
+        "steps": [],
+        "shown": [],
+        "message": "The local model failed to produce a valid next action after one repair.",
+        "errors": [
+          "event: Extra inputs are not permitted",
+          "event: Extra inputs are not permitted"
+        ],
+        "model_calls": 2,
+        "elapsed_s": 0.276
+      },
+      "displayed": "The local model failed to produce a valid next action after one repair."
+    }
+  ]
+}
