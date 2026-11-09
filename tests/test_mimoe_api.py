@@ -156,3 +156,50 @@ def test_stream_rejects_missing_completion_marker():
     with httpx.Client(transport=httpx.MockTransport(handle)) as client:
         with pytest.raises(ValueError, match="before its completion marker"):
             mimoe_api.stream_probe(client, BASE, MODEL, lambda _: None)
+
+
+def test_trace_uses_local_router_with_a_reproducible_session():
+    paths = []
+
+    def handle(request):
+        paths.append(request.url.path)
+        if request.url.path == "/mimik-ai/openai/v1/models":
+            return httpx.Response(200, json={"data": [{"id": MODEL}]})
+        if request.url.path == "/mimik-airouter/openai/v1/aliasModels":
+            return httpx.Response(200, json={"data": [{"name": "other-alias"}]})
+        assert request.headers["x-session-id"] == "wearable-api-probe"
+        assert json.loads(request.content)["model"] == MODEL
+        return httpx.Response(200, json=completion(), headers={"x-mimoe-node-id": "local"})
+
+    with httpx.Client(transport=httpx.MockTransport(handle)) as client:
+        assert mimoe_api.probe(client, BASE, MODEL, trace=True)["served_model"] == MODEL
+
+    assert paths == [
+        "/mimik-ai/openai/v1/models",
+        "/mimik-airouter/openai/v1/aliasModels",
+        "/mimik-airouter/openai/v1/chat/completions",
+    ]
+
+
+def test_trace_refuses_model_name_shadowed_by_an_alias():
+    def handle(request):
+        assert request.method == "GET"
+        entry = {"id": MODEL} if request.url.path.endswith("/models") else {"name": MODEL}
+        return httpx.Response(200, json={"data": [entry]})
+
+    with httpx.Client(transport=httpx.MockTransport(handle)) as client:
+        with pytest.raises(ValueError, match="shadowed"):
+            mimoe_api.probe(client, BASE, MODEL, trace=True)
+
+
+def test_trace_rejects_unconfirmed_local_route():
+    def handle(request):
+        if request.url.path.endswith("/models"):
+            return httpx.Response(200, json={"data": [{"id": MODEL}]})
+        if request.url.path.endswith("/aliasModels"):
+            return httpx.Response(200, json={"data": []})
+        return httpx.Response(200, json=completion(), headers={"x-mimoe-node-id": "remote"})
+
+    with httpx.Client(transport=httpx.MockTransport(handle)) as client:
+        with pytest.raises(ValueError, match="did not confirm local"):
+            mimoe_api.probe(client, BASE, MODEL, trace=True)

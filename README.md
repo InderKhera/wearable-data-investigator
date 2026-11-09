@@ -60,27 +60,34 @@ Verified on Studio 1.0.38 with runtime 3.30.85.
 | Inference observability | **Studio and diagnostic.** The Models card shows current and average tokens per second and inference count. The probe reports API token counts, `ttft_ms`, and throughput fields when present, separately from client wall time. | See what the runtime reports and how long the full request takes at the client. |
 | Playground | **Studio only.** Sent the synthetic wrist-motion prompt below and observed `motion` with per-turn token counts and timing. | Try a prompt before adding agent instructions, tools, or reference handling. [Studio Playground](https://mimoestudio.mimik.com/features/playground.html) |
 | Streaming completions | **Diagnostic.** `--stream` prints text as events arrive and checks for the completion marker. It reports client time to first text, full request time, and any usage supplied by mimOE. | See incremental delivery and distinguish it from waiting for the complete response. |
+| Native Studio Trace | **Diagnostic and Studio.** `--trace` sends the synthetic probe through the local model router. Studio showed the matching model, local route, token counts, and span duration. | Confirm which model and node handled an external request. [Studio Trace](https://mimoestudio.mimik.com/features/trace.html) |
 
-After the setup above, keep the agent as the main demo. The last two commands use the same fixed prompt and send no wearable data.
+After the setup above, keep the agent as the main demo. The three diagnostic commands use the same fixed prompt and send no wearable data.
 
 ```sh
 python -m wearable.cli
 python -m wearable.mimoe_api
 python -m wearable.mimoe_api --stream
+python -m wearable.mimoe_api --trace
 ```
 
 To repeat the Playground check, open **mimOE → Models → Try** on the active Qwen model. In **params**, leave the system prompt empty, set temperature to `0` and max tokens to `40`, then send:
 
 > Choose one label, heart or motion, for the request: How much did my wrist move? Reply with the label only.
 
-Both diagnostic modes and Playground returned `motion`. That label alone supplies no measurement. In the agent, Python validates Qwen's goal, resolves event or interval references, and limits execution to two tool calls. Deterministic tools calculate the values from the recordings. The API accepts the temperature and token limit, and the probe's client timings exclude model listing. Client time to first text includes delivery through HTTP and can differ from mimOE's `ttft_ms`.
+All three diagnostic modes and Playground returned `motion`. That label alone supplies no measurement. In the agent, Python validates Qwen's goal, resolves event or interval references, and limits execution to two tool calls. Deterministic tools calculate the values from the recordings. The API accepts the temperature and token limit, and the probe's client timings exclude model listing. Client time to first text includes delivery through HTTP and can differ from mimOE's `ttft_ms`.
+
+After running `--trace`, open **mimOE → Trace**, select **airouter-v1** and **Last 1h**, and click **Refresh**. In **Conversations**, open `wearable-api-probe`. Look for the latest Qwen completion with node `local` and `54→1` tokens. **Table** shows individual requests. The Studio span duration measures server-side work. API usage reports token counts and runtime metrics, and the probe measures HTTP wall time in Python. Studio can capture prompt and reply text, so this demo uses a fixed synthetic prompt.
+
+The router probe uses the same local setup and credentials as the direct probe. It verifies the loaded model, rejects a matching router alias, and checks that the response came from the local node. No separate tracing setup was needed on the tested runtime. The regular probe and LangChain smoke test used `/mimik-ai/openai/v1` and showed no matching entries under the checked `airouter-v1` filter. The trace probe uses `/mimik-airouter/openai/v1`.
 
 | Considered | Why it was excluded |
 |---|---|
-| Native agent deployment and MCP Gateway | Reviewed native deployment and saw the MCP Gateway entry in Studio. The [BYO Framework path](https://developer.mimik.com/mimOE-studio-early-access-download-v2) already runs the Python tools locally, without deploying a separate agent or tool service. |
+| Native agent deployment and MCP Gateway | Inspected the installed Gateway. A local MCP command and scoped client key would let a BYO client call a registered server, adding a process and protocol hop for analysis the agent already runs in Python. Gateway invocation was outside this demo. [MCP Gateway](https://mimoestudio.mimik.com/features/gateway.html) |
+| Model aliases | Inspected **Models → Alias models**. The router can resolve a stable alias to a model, which helps when switching backends. The demo pins the loaded Qwen model for repeatability. Alias resolution was outside this demo. [Models and aliases](https://mimoestudio.mimik.com/features/models.html) |
 | Embeddings and retrieval | Reviewed the [inference documentation](https://developer.mimik.com/docs/ai-foundation/inference). Analysis reads selected recording intervals directly. |
 | Providers, multiple models, and remote or mesh inference | Reviewed [Providers](https://mimoestudio.mimik.com/features/providers.html) and [Mesh](https://mimoestudio.mimik.com/features/mesh.html). One local model serves the demo without another backend or device. |
-| Studio Trace, Logs, and Benchmark | Inspected the views. Trace showed no entries under the filters checked, and Logs attached to the live stream. Benchmark required a deployed agent. The Models card and probe provide the measurements used here. |
+| Studio Logs and Benchmark | Logs attached to the live stream, and Benchmark required a deployed agent in the view inspected. The Models card, Trace, and probe provide the measurements used here. |
 
 ## How the agent works
 

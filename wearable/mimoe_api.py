@@ -52,12 +52,33 @@ def completion_payload(model):
     }
 
 
-def probe(client, base, model):
+def trace_router(client, base, model):
+    direct_path = "/mimik-ai/openai/v1"
+    if not base.endswith(direct_path) or "/" in model:
+        raise ValueError("Trace requires the local inference base URL and a bare local model ID.")
+    router = base.removesuffix(direct_path) + "/mimik-airouter/openai/v1"
+    aliases = client.get(f"{router}/aliasModels")
+    aliases.raise_for_status()
+    try:
+        names = [alias["name"] for alias in aliases.json()["data"]]
+    except (ValueError, TypeError, KeyError):
+        raise ValueError("Could not verify model aliases on the local router.") from None
+    if model in names:
+        raise ValueError("Trace requires a local model ID that is not shadowed by a router alias.")
+    return router
+
+
+def probe(client, base, model, *, trace=False):
     check_model(client, base, model)
+    if trace:
+        base = trace_router(client, base, model)
+    headers = {"x-session-id": "wearable-api-probe"} if trace else None
     start = perf_counter()
-    response = client.post(f"{base}/chat/completions", json=completion_payload(model))
+    response = client.post(f"{base}/chat/completions", json=completion_payload(model), headers=headers)
     elapsed_ms = (perf_counter() - start) * 1000
     response.raise_for_status()
+    if trace and response.headers.get("x-mimoe-node-id") != "local":
+        raise ValueError("The router did not confirm local inference.")
 
     try:
         body = response.json()
@@ -153,7 +174,9 @@ def stream_probe(client, base, model, emit):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--stream", action="store_true", help="Print text as mimOE sends it")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--stream", action="store_true", help="Print text as mimOE sends it")
+    mode.add_argument("--trace", action="store_true", help="Use the local Studio router for this probe")
     args = parser.parse_args()
     try:
         base, model, token = settings()
@@ -166,7 +189,7 @@ def main():
                 finally:
                     print()
             else:
-                result = probe(client, base, model)
+                result = probe(client, base, model, trace=args.trace)
     except ValueError as error:
         print(error, file=sys.stderr)
         return 1
