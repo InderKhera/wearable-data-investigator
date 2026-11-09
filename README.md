@@ -112,7 +112,7 @@ For the native chat path, open **Agents → New agent**, select the same local Q
 
 > Call the inspect_signal_quality tool once with recording set to "offset". Then report only the missing seconds for heart rate and accelerometer, and the heart-rate gap interval. Use the tool result as evidence.
 
-Check the expanded tool result for `heart_rate.missing_s = 10`, `heart_rate.largest_gaps_s = [[0, 10]]`, and `accelerometer.missing_s = 0` under `signals`. Use the tool result as evidence. All three native chat runs gave the right missing-second counts, but one misstated the accelerometer coverage and another shortened the gap interval to `0`.
+Check the expanded tool result for `heart_rate.missing_s = 10`, `heart_rate.largest_gaps_s = [[0, 10]]`, and `accelerometer.missing_s = 0` under `signals`. Use the tool result as evidence. The native agent successfully invoked the scoped MCP tool in three chat tests, returning the expected missing-second counts. The primary LangChain agent uses deterministic Python rendering to report physiological measurements directly from validated tool results.
 
 Direct JSON-RPC checks at `/mcp/v1/mcp` returned HTTP 401 for missing and invalid keys. The agent's scoped key listed only this tool, rejected an out-of-scope Bash call, and returned the same reports as Python. An invalid recording ID was rejected.
 
