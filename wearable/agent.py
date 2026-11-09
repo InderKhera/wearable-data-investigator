@@ -1,9 +1,7 @@
 """Select a wearable analysis goal with LangChain and execute its bounded tools."""
 import json
-import os
 from dataclasses import dataclass, field
 from time import perf_counter
-from urllib.parse import urlparse
 
 import httpx
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
@@ -16,12 +14,11 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from . import analysis as analytics
 from .data import Recording
+from .mimoe_api import DEFAULT_MODEL, DEFAULT_URL, settings
 from .references import (
     BASELINE_REFERENCE, EVENT_ID, EVENT_REFERENCE, TIME_ORDER_REFERENCE, TOP_EVENT, explicit_windows,
 )
 
-DEFAULT_MODEL = "qwen2.5-0.5b-instruct-q4_k_m"
-DEFAULT_URL = "http://127.0.0.1:8083/mimik-ai/openai/v1"
 MAX_TOOL_CALLS = 2
 
 ROUTE_PROMPT = """Classify the user's wearable analysis request. Reply with one label.
@@ -95,17 +92,8 @@ class Run:
 
 
 def make_model() -> ChatOpenAI:
-    base = os.getenv("MIMOE_BASE_URL", DEFAULT_URL).rstrip("/")
-    parsed = urlparse(base)
-    if (parsed.scheme not in {"http", "https"} or parsed.hostname not in {"localhost", "127.0.0.1", "::1"}
-            or parsed.username or parsed.password or parsed.query or parsed.fragment):
-        raise ValueError("MIMOE_BASE_URL must point to a loopback HTTP(S) endpoint.")
-    if base.endswith("/chat/completions"):
-        raise ValueError("Use the base URL ending in /v1, without /chat/completions.")
-    token = os.getenv("MIMOE_API_KEY")
-    if not token:
-        raise ValueError("Set MIMOE_API_KEY to the token shown by Studio.")
-    return ChatOpenAI(base_url=base, api_key=token, model=os.getenv("MIMOE_MODEL", DEFAULT_MODEL),
+    base, model, token = settings()
+    return ChatOpenAI(base_url=base, api_key=token, model=model,
                       temperature=0, extra_body={"max_tokens": 12}, timeout=25, max_retries=0,
                       use_responses_api=False, http_client=httpx.Client(trust_env=False))
 

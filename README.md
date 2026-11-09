@@ -47,6 +47,41 @@ python -m wearable.cli --recording offset \
 
 Add `--json` to a single question to inspect full structured results.
 
+## mimOE Studio — Capabilities Explored and Design Decisions
+
+Verified on Studio 1.0.38 with runtime 3.30.85.
+
+| Capability | Where it is demonstrated | Why it was selected |
+|---|---|---|
+| Local model management | **Studio → mimOE → Models** showed Qwen2.5-0.5B-Instruct Q4_K_M loaded on GPU with a 32K context. The **API** button confirmed the loopback base URL. | Use one small, identified model on the test Mac. |
+| Authenticated Chat Completions | **Agent.** Uses the local endpoint and the token from the private `.env`. | Keep inference local and verify the model that served each live test. |
+| BYO Framework | **Agent.** LangChain sends the completion request and wraps the four Python tools. | Use the existing Python analysis and control tool execution in one place. |
+| Direct API probe | **Diagnostic.** Lists models with `GET /models`, then sends one synthetic `POST /chat/completions`. An invalid bearer token returned HTTP 403 during verification. | Check the endpoint, authentication, and model reply independently of LangChain. |
+| Inference observability | **Studio and diagnostic.** The Models card shows current and average tokens per second and inference count. The probe reports API token counts, `ttft_ms`, and throughput fields when present, separately from client wall time. | See what the runtime reports and how long the full request takes at the client. |
+| Playground | **Studio only.** Sent the synthetic wrist-motion prompt below and observed `motion` with per-turn token counts and timing. | Try a prompt before adding agent instructions, tools, or reference handling. [Studio Playground](https://mimoestudio.mimik.com/features/playground.html) |
+| Streaming completions | **Diagnostic.** `--stream` prints text as events arrive and checks for the completion marker. It reports client time to first text, full request time, and any usage supplied by mimOE. | See incremental delivery and distinguish it from waiting for the complete response. |
+
+After the setup above, keep the agent as the main demo. The last two commands use the same fixed prompt and send no wearable data.
+
+```sh
+python -m wearable.cli
+python -m wearable.mimoe_api
+python -m wearable.mimoe_api --stream
+```
+
+To repeat the Playground check, open **mimOE → Models → Try** on the active Qwen model. In **params**, leave the system prompt empty, set temperature to `0` and max tokens to `40`, then send:
+
+> Choose one label, heart or motion, for the request: How much did my wrist move? Reply with the label only.
+
+Both diagnostic modes and Playground returned `motion`. That label alone supplies no measurement. In the agent, Python validates Qwen's goal, resolves event or interval references, and limits execution to two tool calls. Deterministic tools calculate the values from the recordings. The API accepts the temperature and token limit, and the probe's client timings exclude model listing. Client time to first text includes delivery through HTTP and can differ from mimOE's `ttft_ms`.
+
+| Considered | Why it was excluded |
+|---|---|
+| Native agent deployment and MCP Gateway | Reviewed native deployment and saw the MCP Gateway entry in Studio. The [BYO Framework path](https://developer.mimik.com/mimOE-studio-early-access-download-v2) already runs the Python tools locally, without deploying a separate agent or tool service. |
+| Embeddings and retrieval | Reviewed the [inference documentation](https://developer.mimik.com/docs/ai-foundation/inference). Analysis reads selected recording intervals directly. |
+| Providers, multiple models, and remote or mesh inference | Reviewed [Providers](https://mimoestudio.mimik.com/features/providers.html) and [Mesh](https://mimoestudio.mimik.com/features/mesh.html). One local model serves the demo without another backend or device. |
+| Studio Trace, Logs, and Benchmark | Inspected the views. Trace showed no entries under the filters checked, and Logs attached to the live stream. Benchmark required a deployed agent. The Models card and probe provide the measurements used here. |
+
 ## How the agent works
 
 ```mermaid
