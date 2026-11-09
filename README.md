@@ -61,6 +61,8 @@ Verified on Studio 1.0.38 with runtime 3.30.85.
 | Playground | **Studio only.** Sent the synthetic wrist-motion prompt below and observed `motion` with per-turn token counts and timing. | Try a prompt before adding agent instructions, tools, or reference handling. [Studio Playground](https://mimoestudio.mimik.com/features/playground.html) |
 | Streaming completions | **Diagnostic.** `--stream` prints text as events arrive and checks for the completion marker. It reports client time to first text, full request time, and any usage supplied by mimOE. | See incremental delivery and distinguish it from waiting for the complete response. |
 | Native Studio Trace | **Diagnostic and Studio.** `--trace` sends the synthetic probe through the local model router. Studio showed the matching model, local route, token counts, and span duration. | Confirm which model and node handled an external request. [Studio Trace](https://mimoestudio.mimik.com/features/trace.html) |
+| MCP Gateway | **Optional.** Studio registered a local stdio server exposing the existing `inspect_signal_quality` calculation. Authenticated Gateway calls matched Python for all three bundled recordings. | Share one read-only calculation with local clients and scope access at the Gateway. [MCP Gateway](https://mimoestudio.mimik.com/features/gateway.html) |
+| Native AI Agent | **Optional, deployed in Studio.** A Qwen agent invoked the scoped Gateway tool in chat. The tool result and reply showed 10 missing heart-rate seconds and zero missing accelerometer seconds on `offset`. | Demonstrate Studio-managed sessions, tool access, and per-call approval. [Native Agents](https://mimoestudio.mimik.com/features/agents.html) |
 
 After the setup above, keep the agent as the main demo. The three diagnostic commands use the same fixed prompt and send no wearable data.
 
@@ -81,13 +83,54 @@ After running `--trace`, open **mimOE → Trace**, select **airouter-v1** and **
 
 The router probe uses the same local setup and credentials as the direct probe. It verifies the loaded model, rejects a matching router alias, and checks that the response came from the local node. No separate tracing setup was needed on the tested runtime. The regular probe and LangChain smoke test used `/mimik-ai/openai/v1` and showed no matching entries under the checked `airouter-v1` filter. The trace probe uses `/mimik-airouter/openai/v1`.
 
+### Optional MCP Gateway and native agent demo
+
+With the local external runtime running, install the optional SDK in the repository's virtual environment with `python -m pip install 'mcp==1.29.0'`. In **mimOE → MCP Gateway → Add server → Paste JSON**, use the checkout's absolute path in both places below. Studio starts the Python process over stdio. The tool accepts only the three bundled recording IDs and returns aggregate signal-quality evidence.
+
+```json
+{
+  "mcpServers": {
+    "wearable-quality": {
+      "command": "/ABSOLUTE/CHECKOUT/.venv/bin/python",
+      "args": ["-B", "-m", "wearable.mcp_quality"],
+      "env": {"PYTHONPATH": "/ABSOLUTE/CHECKOUT"}
+    }
+  }
+}
+```
+
+Expand the connected server to see `inspect_signal_quality`. On macOS, the Studio-bundled runtime CLI can list and call the tool using its local Gateway credentials. Use the Studio port if it differs from `8083`.
+
+```sh
+runtime='/Applications/mimOE Studio.app/Contents/Resources/runtime-bundle-signed/bin/mimoe'
+"$runtime" mcp tools --host 127.0.0.1 --port 8083 --json
+"$runtime" mcp call wearable-quality__inspect_signal_quality '{"recording":"offset"}' \
+  --host 127.0.0.1 --port 8083 --json
+```
+
+For the native chat path, open **Agents → New agent**, select the same local Qwen, name it `wearable-quality-demo`, choose an empty directory you own, and deploy. In the agent's **MCP Servers → Edit access**, uncheck its Bash server, check only `wearable-quality`, and save. Studio manages the scoped client key. In **New chat**, send the request below. Approve once when the card shows `wearable-quality__inspect_signal_quality` and `{"recording":"offset"}`.
+
+> Call the inspect_signal_quality tool once with recording set to "offset". Then report only the missing seconds for heart rate and accelerometer, and the heart-rate gap interval. Use the tool result as evidence.
+
+Check the expanded tool result for `heart_rate.missing_s = 10`, `heart_rate.largest_gaps_s = [[0, 10]]`, and `accelerometer.missing_s = 0` under `signals`. Use the tool result as evidence. All three native chat runs gave the right missing-second counts, but one misstated the accelerometer coverage and another shortened the gap interval to `0`.
+
+Direct JSON-RPC checks at `/mcp/v1/mcp` returned HTTP 401 for missing and invalid keys. The agent's scoped key listed only this tool, rejected an out-of-scope Bash call, and returned the same reports as Python. An invalid recording ID was rejected.
+
+The optional path makes the calculation available to other local clients and lets Studio manage deployment, sessions, and permissions. The primary BYO CLI keeps tool calls in process and enforces event references, a two-call limit, and deterministic rendering in Python. The native chat demo exercises one calculation. It adds a server process, a deployment, and an approval step.
+
+### Benchmark investigation
+
+In **mimOE → Benchmark**, selecting `wearable-quality-demo` enabled benchmark mode on that deployment. Studio ran its built-in `light — ls` workload against the local Qwen with `THINKING_MODE=none`. The one-session Real model run finished in 2.3 s at 23.7 tokens/s, with 341 ms to first word and **0/1 verified**. The session showed a successful `ls` call, but Qwen returned `DONE` instead of `1:DONE` after a retry. A two-session run was stopped after about 90 s without a completed result.
+
+A two-session Mock GPU control used four simulated slots, 800 ms per inference, three tool turns per session, and 500 ms affinity grace. It ended in 5.2 s with **0/2 verified**. Both sessions showed a harness error. The error `identifier 'process' undefined` persisted on retry after adding the expected `scratch/` directory and `AGENTS.md` to the test workspace. Benchmark is useful for capacity testing a native deployment with a verified workload. These runs used Studio's synthetic workload and did not measure the wearable tool or the BYO CLI. [Studio Benchmark](https://mimoestudio.mimik.com/features/bench.html)
+
 | Considered | Why it was excluded |
 |---|---|
-| Native agent deployment and MCP Gateway | Inspected the installed Gateway. A local MCP command and scoped client key would let a BYO client call a registered server, adding a process and protocol hop for analysis the agent already runs in Python. Gateway invocation was outside this demo. [MCP Gateway](https://mimoestudio.mimik.com/features/gateway.html) |
+| Native Benchmark | Tested Real model and Mock GPU on the demo deployment. The installed view offered built-in workloads and required a deployed agent. Neither mode produced a verified run, so the demo uses the CLI evaluation for wearable correctness and the probes for request timing. |
 | Model aliases | Inspected **Models → Alias models**. The router can resolve a stable alias to a model, which helps when switching backends. The demo pins the loaded Qwen model for repeatability. Alias resolution was outside this demo. [Models and aliases](https://mimoestudio.mimik.com/features/models.html) |
-| Embeddings and retrieval | Reviewed the [inference documentation](https://developer.mimik.com/docs/ai-foundation/inference). Analysis reads selected recording intervals directly. |
-| Providers, multiple models, and remote or mesh inference | Reviewed [Providers](https://mimoestudio.mimik.com/features/providers.html) and [Mesh](https://mimoestudio.mimik.com/features/mesh.html). One local model serves the demo without another backend or device. |
-| Studio Logs and Benchmark | Logs attached to the live stream, and Benchmark required a deployed agent in the view inspected. The Models card, Trace, and probe provide the measurements used here. |
+| Embeddings and retrieval | Reviewed the documentation. Analysis reads selected recording intervals directly. [Inference](https://developer.mimik.com/docs/ai-foundation/inference) |
+| Providers, multiple models, and remote or mesh inference | Reviewed the documentation. One local model serves the demo without another backend or device. [Providers](https://mimoestudio.mimik.com/features/providers.html), [Mesh](https://mimoestudio.mimik.com/features/mesh.html) |
+| Studio Logs | Inspected the live stream. The Models card, Trace, and probe provide the request and timing evidence used here. |
 
 ## How the agent works
 
